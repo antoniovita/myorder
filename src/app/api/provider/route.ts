@@ -47,7 +47,9 @@ const POST = async (req: NextRequest) => {
     }
 }
 
-//rota protegida para adm
+//rota protegida para adm falta colocar um middleware para ver se é adm
 const GET = async (req: NextRequest) => {
-
+    const body = req.json();
+    const provider = await prisma.provider.findAll()
+    return NextResponse.json(provider);
 }

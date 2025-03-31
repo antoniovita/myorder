@@ -25,6 +25,11 @@ model Table {
   order       Order[]
 }
 
+model Adm {
+  id        String    @id @default(cuid())
+  name      String
+}
+
 model User {
   id        String    @id @default(cuid())
   tableId   String
@@ -52,6 +57,8 @@ model OrderItem {
 model Item {
   id          String @id @default(cuid())
   providerId  String
+  name        String
+  price       Float
   provider    Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
   orderItem   OrderItem[]
 }
