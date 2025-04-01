@@ -12,6 +12,7 @@ model Provider {
   email     String
   password  String
   name      String
+  description String
   item      Item[]
   table     Table[]
 }
@@ -34,7 +35,7 @@ model User {
   id        String    @id @default(cuid())
   tableId   String
   table     Table     @relation(fields: [tableId], references: [id], onDelete: Cascade)
-  name       String
+  name      String
 }
 
 model Order {
@@ -42,6 +43,7 @@ model Order {
   tableId     String   
   table       Table    @relation(fields: [tableId], references: [id], onDelete: Cascade)
   price       Int
+  status      String
   orderItem   OrderItem[]
 }
 
@@ -59,6 +61,7 @@ model Item {
   providerId  String
   name        String
   price       Float
+  description String
   provider    Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
   orderItem   OrderItem[]
 }
