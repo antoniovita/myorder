@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+rotas da api
 
-## Getting Started
+GET
+/api/user -> rota autenticada para buscar todos os usuarios de um restaurante
+/api/user/id -> rota autenticada para buscar um usuario especifico de um restaaurante
 
-First, run the development server:
+/api/table/id -> rota autenticada para buscar uma table especifica de um restaurante
+/api/table -> rota autenticada para buscar todas as tables de um restaurante
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+/api/provider/id -> rota para buscar um provider e suas informações
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+/api/orderItem/orderId -> rota para buscar os orderItems do pedido
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+/api/order/userId -> rota para buscar os orders do userId
+/api/order/tableId -> rota para buscar os orders do tableId
+/api/order/providerId -> rota para buscar os orders do provider
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+/api/item/id -> rota para buscar um item de um provider pelo id especifico
+/api/item -> rota para buscar todos os item de um provider
 
-## Learn More
+DELETE
 
-To learn more about Next.js, take a look at the following resources:
+/api/item/id -> rota autenticada para deletar um item de um provider
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+/api/order/id -> rota para deletar um order de um usuario

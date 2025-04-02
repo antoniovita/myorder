@@ -3,6 +3,7 @@ import { prisma } from "../../../lib/prisma";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import authenticate from "@/middlewares/authMiddleware";
+import { cookies } from "next/headers";
 
 const validateEmail = (email: string) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -41,10 +42,14 @@ const POST = async (req: NextRequest) => {
                     name: body.name,
                     email: body.email,
                     password: hashedPassword,
+                    description: body.description || null
                 }
             });
 
             const token = jwt.sign({ id: provider.id, email: provider.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            
+            (await cookies()).set("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3600 });
+
             const { password, ...providerData } = provider;
             return NextResponse.json({ message: 'Provider criado com sucesso', provider: providerData, token }, { status: 201 });
         }
@@ -67,6 +72,8 @@ const POST = async (req: NextRequest) => {
             }
 
             const token = jwt.sign({ id: provider.id, email: provider.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            
+            (await cookies()).set("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3600 });
 
             const { password, ...providerData } = provider;
             return NextResponse.json({ message: 'Login executado com sucesso', provider: providerData, token }, { status: 200 });
@@ -74,7 +81,8 @@ const POST = async (req: NextRequest) => {
 
         return NextResponse.json({ message: 'Ação não reconhecida.' }, { status: 400 });
     } catch (error) {
-        return NextResponse.json({ message: "Erro interno do servidor", error }, { status: 500 });
+        console.error("Erro no POST:", error);
+        return NextResponse.json({ message: "Erro interno do servidor" }, { status: 500 });
     }
 }
 
@@ -98,7 +106,8 @@ const GET = async (req: NextRequest) => {
 
         return NextResponse.json(provider, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: "Erro interno do servidor", error }, { status: 500 });
+        console.error("Erro no GET:", error);
+        return NextResponse.json({ message: "Erro interno do servidor" }, { status: 500 });
     }
 }
 
@@ -112,17 +121,12 @@ const DELETE = async (req: NextRequest) => {
 
         const id = auth.id;
 
-        const provider = await prisma.provider.findUnique({ where: { id } });
-
-        if (!provider) {
-            return NextResponse.json({ message: 'Provider não encontrado.' }, { status: 404 });
-        }
-
         await prisma.provider.delete({ where: { id } });
 
         return NextResponse.json({ message: 'Provider excluído com sucesso.' }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: "Erro interno do servidor", error }, { status: 500 });
+        console.error("Erro no DELETE:", error);
+        return NextResponse.json({ message: "Erro interno do servidor" }, { status: 500 });
     }
 }
 
@@ -139,17 +143,20 @@ const PUT = async (req: NextRequest) => {
             return NextResponse.json({ message: "Usuário não autorizado." }, { status: 403 });
         }    
 
+        const updateData: { name?: string, description?: string } = {};
+
+        if (body.name) updateData.name = body.name;
+        if (body.description) updateData.description = body.description;
+
         const provider = await prisma.provider.update({
             where: { id: body.id },
-            data: {
-                name: body.name,
-                description: body.description,
-            }
+            data: updateData
         });
 
         return NextResponse.json({ message: 'Provider atualizado com sucesso', provider }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ message: "Erro interno do servidor", error }, { status: 500 });
+        console.error("Erro no PUT:", error);
+        return NextResponse.json({ message: "Erro interno do servidor" }, { status: 500 });
     }
 }
 

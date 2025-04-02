@@ -12,7 +12,8 @@ model Provider {
   email       String @unique
   password    String
   name        String
-  description String
+  description String?
+  user        User[]
   item        Item[]
   table       Table[]
   order       Order[]
@@ -40,6 +41,8 @@ model User {
   tableId           String
   table             Table     @relation(fields: [tableId], references: [id], onDelete: Cascade)
   name              String
+  providerId        String
+  provider          Provider  @relation(fields: [providerId], references: [id], onDelete: Cascade)
   order             Order[]
 }
 
@@ -58,13 +61,17 @@ model Order {
 }
 
 model OrderItem {
-  id          String  @id @default(cuid())
-  itemId      String
-  item        Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  quantity    Int
-  orderId     String
-  order       Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id       String  @id @default(cuid())
+  itemId   String
+  item     Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  quantity Int
+  orderId  String
+  order    Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  observation String?
+
+  @@unique([orderId, itemId])
 }
+
 
 model Item {
   id          String @id @default(cuid())

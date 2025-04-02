@@ -78,7 +78,6 @@ const GET = async (req: NextRequest) => {
     }
 };
 
-// alterar numero da mesa
 const PUT = async (req: NextRequest) => {
     try {
         const auth = await authenticate(req);
@@ -98,7 +97,7 @@ const PUT = async (req: NextRequest) => {
             return NextResponse.json({ message: "Mesa não encontrada ou não pertence ao seu restaurante." }, { status: 404 });
         }
 
-        const existingTable = await prisma.table.findUnique({
+        const existingTable = await prisma.table.findFirst({
             where: {
                 providerId: auth.id,
                 number: body.newNumber
@@ -120,7 +119,6 @@ const PUT = async (req: NextRequest) => {
     }
 };
 
-// apagar uma mesa
 const DELETE = async (req: NextRequest) => {
     try {
         const auth = await authenticate(req);

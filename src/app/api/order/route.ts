@@ -4,8 +4,9 @@ import { prisma } from "../../../lib/prisma";
 export const POST = async (req: NextRequest) => {
     try {
         const body = await req.json();
-        if (!body.name || !body.tableId || !body.providerId || !body.price) {
-            return NextResponse.json({ message: "Nome, tableId, providerId e price são obrigatórios." }, { status: 400 });
+        
+        if (!body.tableId || !body.userId || !body.providerId || !body.price) {
+            return NextResponse.json({ message: "tableId, userId, providerId e price são obrigatórios." }, { status: 400 });
         }
 
         const order = await prisma.order.create({
@@ -19,6 +20,9 @@ export const POST = async (req: NextRequest) => {
             },
             include: {
                 table: true,
+                user: true,
+                provider: true,
+                orderItem: true,
             },
         });
 
@@ -30,7 +34,6 @@ export const POST = async (req: NextRequest) => {
     }
 };
 
-// rota que busca os orders do provider inteiro, da table ou do userId
 export const GET = async (req: NextRequest) => {
     try {
         const { searchParams } = new URL(req.url);
@@ -42,26 +45,59 @@ export const GET = async (req: NextRequest) => {
             return NextResponse.json({ message: "É necessário fornecer um providerId, tableId ou userId." }, { status: 400 });
         }
 
-        let orders;
+        let whereCondition = {};
+        if (providerId) whereCondition = { providerId };
+        else if (tableId) whereCondition = { tableId };
+        else if (userId) whereCondition = { userId };
 
-        if (providerId) {
-            orders = await prisma.order.findMany({
-                where: { providerId },
-            });
-        } else if (tableId) {
-            orders = await prisma.order.findMany({
-                where: { tableId },
-            });
-        } else if (userId) {
-            orders = await prisma.order.findMany({
-                where: { userId },
-            });
-        }
+        const orders = await prisma.order.findMany({
+            where: whereCondition,
+            include: {
+                table: true,
+                user: true,
+                provider: true,
+                orderItem: true,
+            },
+        });
 
         return NextResponse.json(orders, { status: 200 });
 
     } catch (error) {
         console.error("Erro ao buscar pedidos:", error);
         return NextResponse.json({ message: "Erro ao buscar pedidos." }, { status: 500 });
+    }
+};
+
+// atualizar o status do pedido
+export const PUT = async (req: NextRequest) => {
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get("id");
+
+        if (!id) {
+            return NextResponse.json({ message: "ID é obrigatório." }, { status: 400 });
+        }
+
+        const body = await req.json();
+        if (!body.status || typeof body.status !== "string") {
+            return NextResponse.json({ message: "Status inválido." }, { status: 400 });
+        }
+
+        const existingOrder = await prisma.order.findUnique({ where: { id } });
+
+        if (!existingOrder) {
+            return NextResponse.json({ message: "Pedido não encontrado." }, { status: 404 });
+        }
+
+        const order = await prisma.order.update({
+            where: { id },
+            data: { status: body.status },
+        });
+
+        return NextResponse.json({ message: "Pedido atualizado com sucesso!", order }, { status: 200 });
+
+    } catch (error) {
+        console.error("Erro ao atualizar pedido:", error);
+        return NextResponse.json({ message: "Erro ao atualizar pedido." }, { status: 500 });
     }
 };

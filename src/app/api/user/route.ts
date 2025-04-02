@@ -9,7 +9,7 @@ const POST = async (req: NextRequest) => {
             return NextResponse.json({ message: 'O nome e o número da mesa são obrigatórios.' }, { status: 400 });
         }
 
-        const table = await prisma.table.findUnique({
+        const table = await prisma.table.findFirst({
             where: {
                     number: body.tableNumber,
                     providerId: body.providerId
@@ -24,6 +24,7 @@ const POST = async (req: NextRequest) => {
             data: {
                 name: body.name,
                 tableId: table.id,
+                providerId: body.providerId,
             }
         });
 
@@ -44,7 +45,7 @@ const GET = async (req: NextRequest) => {
         }
 
         const users = await prisma.user.findMany({
-            where: { providerId: auth.id }, 
+            where: {providerId: auth.id }, 
             include: { table: true, order: true }, 
         });
 
@@ -64,7 +65,7 @@ const PUT = async (req: NextRequest) => {
             return NextResponse.json({ message: 'É necessário preencher todos os campos.' }, { status: 400 });
         }
     
-        const tableFind = await prisma.table.findUnique({
+        const tableFind = await prisma.table.findFirst({
             where: { providerId: body.providerId, number: body.number }
         });
         if (!tableFind) {
