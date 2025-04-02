@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import authenticate from "@/middlewares/authMiddleware";
 import { prisma } from "../../../lib/prisma"; 
-import { table } from "console";
 
 const POST = async (req: NextRequest) => {
     try {
         const body = await req.json();
-        if (!body.name || !body.tableNumber) {
+        if (!body.name || !body.tableNumber || !body.providerId) {
             return NextResponse.json({ message: 'O nome e o número da mesa são obrigatórios.' }, { status: 400 });
         }
 
         const table = await prisma.table.findUnique({
-            where: { number: body.tableNumber },  // Procurando pela mesa com esse número
+            where: {
+                    number: body.tableNumber,
+                    providerId: body.providerId
+                },
         });
 
         if (!table) {
@@ -53,4 +55,32 @@ const GET = async (req: NextRequest) => {
     }
 };
 
-export { POST, GET };
+//user trocar de mesa
+const PUT = async (req: NextRequest) => {
+    try {
+        const body = await req.json();
+
+        if (!body.providerId || !body.number || !body.newNumber) {
+            return NextResponse.json({ message: 'É necessário preencher todos os campos.' }, { status: 400 });
+        }
+    
+        const tableFind = await prisma.table.findUnique({
+            where: { providerId: body.providerId, number: body.number }
+        });
+        if (!tableFind) {
+            return NextResponse.json({ message: 'Mesa não encontrada.' }, { status: 404 });
+        }
+        const updatedTable = await prisma.table.update({
+            where: { id: tableFind.id },
+            data: { number: body.newNumber }
+        });
+
+        return NextResponse.json({ message: 'Mesa atualizada com sucesso!', updatedTable }, { status: 200 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ message: 'Erro ao atualizar a mesa.' }, { status: 500 });
+    }
+};
+
+
+export { POST, GET , PUT};

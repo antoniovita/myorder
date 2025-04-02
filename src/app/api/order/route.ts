@@ -17,6 +17,9 @@ export const POST = async (req: NextRequest) => {
                 status: "pending",
                 date: new Date(),
             },
+            include: {
+                table: true,
+            },
         });
 
         return NextResponse.json({ message: "Pedido criado com sucesso!", order }, { status: 201 });

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import authenticate from "@/middlewares/authMiddleware";
 import { prisma } from "../../../lib/prisma"; 
 
-// Criar uma nova mesa
 const POST = async (req: NextRequest) => {
     try {
         const auth = await authenticate(req);
@@ -15,8 +14,7 @@ const POST = async (req: NextRequest) => {
         if (!body.number) {
             return NextResponse.json({ message: "O número da mesa é obrigatório." }, { status: 400 });
         }
-
-        // Verifica se a mesa já existe para o mesmo provider
+        
         const existingTable = await prisma.table.findFirst({
             where: {
                 providerId: auth.id,
@@ -42,13 +40,30 @@ const POST = async (req: NextRequest) => {
     }
 };
 
-// Obter todas as mesas do restaurante autenticado
 const GET = async (req: NextRequest) => {
     try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get("id");
         const auth = await authenticate(req);
 
         if (!auth || typeof auth !== 'object' || !('id' in auth)) {
             return NextResponse.json({ message: "Usuário não autenticado." }, { status: 401 });
+        }
+
+        if (id) {
+            const table = await prisma.table.findUnique({
+                where: { id },
+                include: { 
+                    user: true,
+                    order: true 
+                }, 
+            });
+
+            if (!table) {
+                return NextResponse.json({ message: "Mesa não encontrada." }, { status: 404 });
+            }
+
+            return NextResponse.json(table, { status: 200 });
         }
 
         const tables = await prisma.table.findMany({
@@ -63,7 +78,7 @@ const GET = async (req: NextRequest) => {
     }
 };
 
-// Atualizar o número da mesa
+// alterar numero da mesa
 const PUT = async (req: NextRequest) => {
     try {
         const auth = await authenticate(req);
@@ -77,21 +92,18 @@ const PUT = async (req: NextRequest) => {
             return NextResponse.json({ message: "ID da mesa e novo número são obrigatórios." }, { status: 400 });
         }
 
-        // Verifica se a mesa pertence ao provider autenticado
         const table = await prisma.table.findUnique({ where: { id: body.id } });
 
         if (!table || table.providerId !== auth.id) {
             return NextResponse.json({ message: "Mesa não encontrada ou não pertence ao seu restaurante." }, { status: 404 });
         }
 
-        // Verifica se o novo número já existe no restaurante do provider
-        const existingTable = await prisma.table.findFirst({
+        const existingTable = await prisma.table.findUnique({
             where: {
                 providerId: auth.id,
                 number: body.newNumber
             }
         });
-
         if (existingTable) {
             return NextResponse.json({ message: "Já existe uma mesa com esse número no seu restaurante." }, { status: 400 });
         }
@@ -108,7 +120,7 @@ const PUT = async (req: NextRequest) => {
     }
 };
 
-// Deletar uma mesa
+// apagar uma mesa
 const DELETE = async (req: NextRequest) => {
     try {
         const auth = await authenticate(req);
@@ -124,7 +136,6 @@ const DELETE = async (req: NextRequest) => {
             return NextResponse.json({ message: "ID da mesa é obrigatório." }, { status: 400 });
         }
 
-        // Verifica se a mesa pertence ao restaurante autenticado
         const table = await prisma.table.findUnique({ where: { id } });
 
         if (!table || table.providerId !== auth.id) {
