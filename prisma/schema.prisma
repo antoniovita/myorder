@@ -8,43 +8,53 @@ datasource db {
 }
 
 model Provider {
-  id        String @id @default(cuid())
-  email     String
-  password  String
-  name      String
+  id          String @id @default(cuid())
+  email       String @unique
+  password    String
+  name        String
   description String
-  item      Item[]
-  table     Table[]
+  item        Item[]
+  table       Table[]
+  order       Order[]
 }
 
 model Table {
   id          String    @id @default(cuid())
   providerId  String
-  number      Int
+  number      Int       
   provider    Provider  @relation(fields: [providerId], references: [id], onDelete: Cascade)
   user        User[]
   order       Order[]
+
+  @@unique([providerId, number]) 
 }
+
 
 model Adm {
   id        String    @id @default(cuid())
-  name      String
+  name      String    @unique
 }
 
 model User {
-  id        String    @id @default(cuid())
-  tableId   String
-  table     Table     @relation(fields: [tableId], references: [id], onDelete: Cascade)
-  name      String
+  id                String    @id @default(cuid())
+  tableId           String
+  table             Table     @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  name              String
+  order             Order[]
 }
 
 model Order {
   id          String   @id @default(cuid())
   tableId     String   
   table       Table    @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  userId      String  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   price       Int
   status      String
+  providerId  String
+  provider    Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
   orderItem   OrderItem[]
+  date        DateTime
 }
 
 model OrderItem {
@@ -65,4 +75,3 @@ model Item {
   provider    Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
   orderItem   OrderItem[]
 }
-
