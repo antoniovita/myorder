@@ -6,14 +6,14 @@ const POST = async (req: NextRequest) => {
     try {
         const body = await req.json();
         if (!body.name || !body.tableNumber || !body.providerId) {
-            return NextResponse.json({ message: 'O nome e o número da mesa são obrigatórios.' }, { status: 400 });
+            return NextResponse.json({ message: 'O nome, número da mesa e providerId são obrigatórios.' }, { status: 400 });
         }
 
         const table = await prisma.table.findFirst({
             where: {
-                    number: body.tableNumber,
-                    providerId: body.providerId
-                },
+                number: body.tableNumber,
+                providerId: body.providerId
+            },
         });
 
         if (!table) {
@@ -35,7 +35,6 @@ const POST = async (req: NextRequest) => {
     }
 };
 
-
 const GET = async (req: NextRequest) => {
     try {
         const auth = await authenticate(req);
@@ -45,7 +44,7 @@ const GET = async (req: NextRequest) => {
         }
 
         const users = await prisma.user.findMany({
-            where: {providerId: auth.id }, 
+            where: { providerId: auth.id }, 
             include: { table: true, order: true }, 
         });
 
@@ -56,32 +55,31 @@ const GET = async (req: NextRequest) => {
     }
 };
 
-//user trocar de mesa
 const PUT = async (req: NextRequest) => {
     try {
         const body = await req.json();
 
-        if (!body.providerId || !body.number || !body.newNumber) {
-            return NextResponse.json({ message: 'É necessário preencher todos os campos.' }, { status: 400 });
+        if (!body.providerId || !body.userId || !body.newTableNumber) {
+            return NextResponse.json({ message: 'É necessário preencher todos os campos: providerId, userId e newTableNumber.' }, { status: 400 });
         }
     
-        const tableFind = await prisma.table.findFirst({
-            where: { providerId: body.providerId, number: body.number }
+        const newTable = await prisma.table.findFirst({
+            where: { providerId: body.providerId, number: body.newTableNumber }
         });
-        if (!tableFind) {
-            return NextResponse.json({ message: 'Mesa não encontrada.' }, { status: 404 });
+        if (!newTable) {
+            return NextResponse.json({ message: 'Nova mesa não encontrada.' }, { status: 404 });
         }
-        const updatedTable = await prisma.table.update({
-            where: { id: tableFind.id },
-            data: { number: body.newNumber }
+
+        const updatedUser = await prisma.user.update({
+            where: { id: body.userId },
+            data: { tableId: newTable.id }
         });
 
-        return NextResponse.json({ message: 'Mesa atualizada com sucesso!', updatedTable }, { status: 200 });
+        return NextResponse.json({ message: 'Usuário movido para nova mesa com sucesso!', updatedUser }, { status: 200 });
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ message: 'Erro ao atualizar a mesa.' }, { status: 500 });
+        return NextResponse.json({ message: 'Erro ao atualizar a mesa do usuário.' }, { status: 500 });
     }
 };
 
-
-export { POST, GET , PUT};
+export { POST, GET, PUT };
