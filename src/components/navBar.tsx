@@ -7,7 +7,7 @@ export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-white text-black py-4 px-8">
+    <nav className="bg-white text-black py-4 px-8 fixed top-0 left-0 w-full z-50">
       <div className="flex justify-between items-center">
         <h1 className="text-xl font-normal">order</h1>
 
@@ -24,7 +24,7 @@ export default function NavBar() {
       </div>
 
       {isOpen && (
-        <div className="flex font-medium flex-col gap-3 mt-4 md:hidden">
+        <div className="flex font-medium flex-col gap-3 md:hidden bg-white p-4 absolute w-full left-0 top-full">
           <Link href={"/about"} onClick={() => setIsOpen(false)}>about</Link>
           <Link href={"/services"} onClick={() => setIsOpen(false)}>services</Link>
           <Link href={"/contact"} onClick={() => setIsOpen(false)}>contact</Link>
