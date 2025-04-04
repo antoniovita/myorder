@@ -67,7 +67,7 @@ const BusinessPage = () => {
 
     useEffect(() => {
         if (!providerId || !token) {
-            console.log("⏳ Aguardando credenciais...");
+            console.log(" Aguardando credenciais...");
             return;
         }
 
@@ -76,7 +76,7 @@ const BusinessPage = () => {
                 setLoading(true);
                 setError('');
 
-                console.log(`📡 Iniciando GETs com providerId: ${providerId}`);
+                console.log(`Iniciando GETs com providerId: ${providerId}`);
 
                 const [usersRes, tablesRes, ordersRes] = await Promise.all([
                     fetch(`/api/user`, {
@@ -125,12 +125,17 @@ const BusinessPage = () => {
         fetchData();
     }, [providerId, token]);
 
-    // Renderização
-    if (loading) return <div className="text-center mt-10 text-black">Carregando...</div>;
-    if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
+    if (loading) return <div className="text-center mt-10 bg-white text-black">Carregando...</div>;
+    if (error) return <div className="text-center mt-10 bg-white text-red-500">{error}</div>;
 
     return (
         <div className="min-h-screen bg-gray-100 p-6 text-black">
+            {!token && !loading ? (
+            <h1 className="text-center mt-10 text-red-500">
+                Você precisa estar logado para ver o painel do restaurante
+            </h1>   
+        ) : (
+            <>
             <h1 className="text-3xl font-bold text-center mb-6">Painel do Restaurante</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -178,6 +183,8 @@ const BusinessPage = () => {
                 </div>
             </div>
             <CreateTable></CreateTable>
+            </>
+        )}
         </div>
     );
 };

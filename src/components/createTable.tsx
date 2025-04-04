@@ -50,8 +50,8 @@ const CreateTable = () => {
         setSuccess('');
         
         try {
-            console.log(`📤 Criando mesa número ${tableNumber}...`);
-            console.log('📜 Enviando requisição com:', { token, providerId, tableNumber });
+            console.log(`Criando mesa número ${tableNumber}...`);
+            console.log('Enviando requisição com:', { token, providerId, tableNumber });
             
             const response = await fetch('/api/table', {
                 method: 'POST',
@@ -78,6 +78,7 @@ const CreateTable = () => {
             setError(error instanceof Error ? error.message : 'Erro inesperado.');
         } finally {
             setLoading(false);
+            window.location.reload();
         }
     };
 
