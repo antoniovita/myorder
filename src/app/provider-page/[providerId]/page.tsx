@@ -1,32 +1,63 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const ProviderWelcomePage = () => {
-    const searchParams = useSearchParams();
-    const providerId = searchParams.get("id");
-    const [error, setError] = useState('')
+    const Router = useRouter();
+    const params = useParams();
+    const providerId = params?.providerId as string; 
+    console.log("Provider ID:", providerId);
 
     const [providerData, setProviderData] = useState<{ name?: string }>({});
     const [name, setName] = useState("");
     const [tableNumber, setTableNumber] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
+    // Busca dados do provedor
     useEffect(() => {
         if (providerId) {
-            fetch(`/api/?id=${providerId}`)
+            fetch(`/api/id=${providerId}`)
                 .then((res) => res.json())
                 .then((data) => setProviderData(data))
                 .catch((err) => console.error("Erro ao buscar dados do provedor:", err));
         }
     }, [providerId]);
 
-    const handleCreateUser = async () => {
-        if (!name) {
-            setError
-        }
+    const handleSubmit = async () => {
+        setLoading(true);
+        setError("");
 
-    }
+        const payload = {
+            name,
+            tableNumber: Number(tableNumber),
+            providerId,
+        };
+
+        try {
+            const res = await fetch("/api/user", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+                throw new Error("Erro ao criar usuário.");
+            }
+
+            Router.push("/items");
+            setName("");
+            setTableNumber("");
+        } catch (err) {
+            setError("Falha ao criar usuário. Tente novamente.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-white">
@@ -36,16 +67,16 @@ const ProviderWelcomePage = () => {
                 </h1>
                 
                 <div className="flex flex-col gap-4">
-                    <label className="font-medium text-black">Nome</label>
+                    <label className="font-medium text-gray-700">Nome</label>
                     <input
                         type="text"
                         placeholder="Insira seu nome..."
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="border border-gray-300 text-black rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                        className="border text-black border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                     />
 
-                    <label className="font-medium text-black">Número da Mesa</label>
+                    <label className="font-medium text-gray-700">Número da Mesa</label>
                     <input
                         type="number"
                         placeholder="Insira a mesa..."
@@ -54,10 +85,14 @@ const ProviderWelcomePage = () => {
                         className="border text-black border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                     />
 
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+
                     <button
-                        className="bg-yellow-400 text-black font-semibold py-2 px-4 rounded-lg hover:bg-yewllow-700 transition"
+                        onClick={handleSubmit}
+                        className="bg-yellow-400 text-black font-semibold py-2 px-4 rounded-lg hover:bg-yellow-500 transition"
+                        disabled={loading}
                     >
-                        Confirmar
+                        {loading ? "Enviando..." : "Confirmar"}
                     </button>
                 </div>
             </div>
