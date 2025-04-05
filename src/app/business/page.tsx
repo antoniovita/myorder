@@ -1,4 +1,5 @@
 'use client';
+import CreateItem from '@/components/createItem';
 import CreateTable from '@/components/createTable';
 import { useState, useEffect } from 'react';
 
@@ -183,6 +184,7 @@ const BusinessPage = () => {
                 </div>
             </div>
             <CreateTable></CreateTable>
+            <CreateItem></CreateItem>
             </>
         )}
         </div>
