@@ -13,6 +13,7 @@ model Provider {
   password    String
   name        String
   description String?
+  imgUrl      String?
   user        User[]
   item        Item[]
   table       Table[]
@@ -78,6 +79,8 @@ model Item {
   providerId  String
   name        String
   price       Float
+  imgUrl      String?
+  category    String
   description String
   provider    Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
   orderItem   OrderItem[]

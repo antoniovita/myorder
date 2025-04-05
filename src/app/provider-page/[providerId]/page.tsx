@@ -19,7 +19,7 @@ const ProviderWelcomePage = () => {
     // Busca dados do provedor
     useEffect(() => {
         if (providerId) {
-            fetch(`/api/id=${providerId}`)
+            fetch(`/api/provider/?id=${providerId}`)
                 .then((res) => res.json())
                 .then((data) => setProviderData(data))
                 .catch((err) => console.error("Erro ao buscar dados do provedor:", err));
@@ -63,7 +63,7 @@ const ProviderWelcomePage = () => {
         <div className="flex flex-col items-center justify-center h-screen bg-white">
             <div className="bg-gray-50 border border-gray-300 p-6 rounded-lg shadow-lg max-w-md w-full">
                 <h1 className="text-2xl text-black font-bold mb-4 text-center">
-                    Bem-vindo, {providerData.name || "Cliente"}!
+                    Bem-vindo ao {providerData.name}!
                 </h1>
                 
                 <div className="flex flex-col gap-4">

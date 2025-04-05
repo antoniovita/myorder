@@ -1,18 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import authenticate from "@/middlewares/authMiddleware";
 import { prisma } from "../../../lib/prisma"; 
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 
 const POST = async (req: NextRequest) => {
     try {
+        if (!process.env.JWT_SECRET) {
+            return NextResponse.json({ message: "Chave JWT_SECRET não informada no .env" }, { status: 500 });
+        }
+
         const body = await req.json();
-        if (!body.name || !body.tableNumber || !body.providerId) {
+        const { name, tableNumber, providerId } = body;
+
+        if (!name || !tableNumber || !providerId) {
             return NextResponse.json({ message: 'O nome, número da mesa e providerId são obrigatórios.' }, { status: 400 });
         }
 
         const table = await prisma.table.findFirst({
             where: {
-                number: body.tableNumber,
-                providerId: body.providerId
+                number: tableNumber,
+                providerId: providerId
             },
         });
 
@@ -20,20 +28,45 @@ const POST = async (req: NextRequest) => {
             return NextResponse.json({ message: 'Mesa não encontrada.' }, { status: 404 });
         }
 
-        const user = await prisma.user.create({
-            data: {
-                name: body.name,
+        let user = await prisma.user.findFirst({
+            where: {
+                name,
                 tableId: table.id,
-                providerId: body.providerId,
+                providerId
             }
         });
 
-        return NextResponse.json({ message: 'Usuário criado com sucesso!', user }, { status: 201 });
+        const created = !user;
+
+        if (created) {
+            user = await prisma.user.create({
+                data: {
+                    name,
+                    tableId: table.id,
+                    providerId,
+                }
+            });
+        }
+
+        if (!user) {
+            return NextResponse.json({ message: 'Erro ao criar ou autenticar o usuário.' }, { status: 500 });
+        }
+
+        const token = jwt.sign({ id: user.id, name: user.name }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const cookiesStore = await cookies();
+        cookiesStore.set("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3600 });
+        cookiesStore.set("id", user.id, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3600 });
+
+        return NextResponse.json(
+            { message: created ? 'Usuário criado com sucesso!' : 'Login realizado com sucesso!', user },
+            { status: 200 }
+        );
     } catch (error) {
         console.error(error);
         return NextResponse.json({ message: 'Erro ao criar o usuário.' }, { status: 500 });
     }
 };
+
 
 const GET = async (req: NextRequest) => {
     try {
