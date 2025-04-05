@@ -1,7 +1,18 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 
-const CreateTable = () => {
+interface CreateTableProps {
+    onTableCreated: (newTable: {
+        id: string;
+        number: number;
+        providerId: string;
+        user: [];
+        order: [];
+    }) => void;
+}
+
+const CreateTable = ({ onTableCreated }: CreateTableProps) => {
     const [tableNumber, setTableNumber] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -14,23 +25,19 @@ const CreateTable = () => {
             setLoading(true);
             setError('');
             try {
-                console.log('🔍 Buscando credenciais...');
                 const response = await fetch('/api/token', { credentials: 'include' });
                 if (!response.ok) throw new Error('Falha ao obter credenciais');
-                
+
                 const data = await response.json();
-                console.log('✅ Dados de autenticação recebidos:', data);
-                
                 setToken(data.token || null);
                 setProviderId(data.id || null);
             } catch (err) {
-                console.error('❌ Erro ao buscar dados de autenticação:', err);
                 setError('Erro ao buscar credenciais.');
             } finally {
                 setLoading(false);
             }
         };
-        
+
         fetchAuthData();
     }, []);
 
@@ -39,20 +46,17 @@ const CreateTable = () => {
             setError('O número da mesa é obrigatório.');
             return;
         }
+
         if (!token || !providerId) {
             setError('Credenciais não encontradas. Tente novamente.');
-            console.log('❌ Credenciais ausentes:', { token, providerId });
             return;
         }
-        
+
         setLoading(true);
         setError('');
         setSuccess('');
-        
+
         try {
-            console.log(`Criando mesa número ${tableNumber}...`);
-            console.log('Enviando requisição com:', { token, providerId, tableNumber });
-            
             const response = await fetch('/api/table', {
                 method: 'POST',
                 headers: {
@@ -64,43 +68,62 @@ const CreateTable = () => {
                     providerId,
                 }),
             });
-            
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Erro ao criar a mesa.');
             }
-            
-            setSuccess('Mesa criada com sucesso!');
+
+            const newTable = await response.json();
+            console.log('Nova mesa criada:', newTable);
+            onTableCreated(newTable.table);
+            setSuccess('✅ Mesa criada com sucesso!');
             setTableNumber('');
-            console.log('✅ Mesa criada com sucesso!');
         } catch (error) {
-            console.error('❌ Erro ao criar mesa:', error);
             setError(error instanceof Error ? error.message : 'Erro inesperado.');
         } finally {
             setLoading(false);
-            window.location.reload();
         }
     };
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTableNumber(e.target.value);
+        if (error) setError('');
+        if (success) setSuccess('');
+    };
+
     return (
-        <div className="bg-white shadow-md rounded-xl p-4">
-            <h2 className="text-xl font-semibold mb-4">Criar Nova Mesa</h2>
-            <input 
-                type="number" 
-                value={tableNumber} 
-                onChange={(e) => setTableNumber(e.target.value)} 
-                placeholder="Número da mesa"
-                className="border p-2 rounded-lg w-full mb-2"
-            />
-            <button 
-                onClick={handleCreateTable} 
-                disabled={loading}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg w-full"
-            >
-                {loading ? 'Criando...' : 'Criar Mesa'}
-            </button>
-            {error && <p className="text-red-500 mt-2">{error}</p>}
-            {success && <p className="text-green-500 mt-2">{success}</p>}
+        <div className="bg-white shadow-lg rounded-2xl p-6 mt-8 w-full max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Criar Nova Mesa</h2>
+
+            <div className="flex flex-col gap-3">
+                <input
+                    type="number"
+                    value={tableNumber}
+                    onChange={handleChange}
+                    placeholder="Número da mesa"
+                    className="border border-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                />
+
+                <button
+                    onClick={handleCreateTable}
+                    disabled={loading}
+                    className={`flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-xl transition ${
+                        loading && 'opacity-60 cursor-not-allowed'
+                    }`}
+                >
+                    {loading ? (
+                        <>
+                            <Loader2 className="animate-spin w-5 h-5" /> Criando...
+                        </>
+                    ) : (
+                        'Criar Mesa'
+                    )}
+                </button>
+
+                {error && <p className="text-sm text-red-500">{error}</p>}
+                {success && <p className="text-sm text-green-500">{success}</p>}
+            </div>
         </div>
     );
 };
