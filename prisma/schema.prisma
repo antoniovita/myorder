@@ -80,7 +80,7 @@ model Item {
   name        String
   price       Float
   imgUrl      String?
-  category    String
+  category    String?
   description String
   provider    Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
   orderItem   OrderItem[]

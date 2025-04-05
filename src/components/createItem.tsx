@@ -1,8 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2, ImagePlus } from 'lucide-react';
-
-const IMGUR_CLIENT_ID = '090f745823f2bff';
+import { supabase } from '@/lib/supabase';
 
 const CreateItem = () => {
     const [name, setName] = useState('');
@@ -11,30 +10,51 @@ const CreateItem = () => {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imgUrl, setImgUrl] = useState('');
     const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
     const [uploading, setUploading] = useState(false);
+    const [token, setToken] = useState<string | null>(null);
+    const [providerId, setProviderId] = useState<string | null>(null);
+
+        useEffect(() => {
+            const fetchAuthData = async () => {
+                setError('');
+                try {
+                    const response = await fetch('/api/token', { credentials: 'include' });
+                    if (!response.ok) throw new Error('Falha ao obter credenciais');
+    
+                    const data = await response.json();
+                    setToken(data.token || null);
+                    setProviderId(data.id || null);
+                } catch (err) {
+                    setError('Erro ao buscar credenciais.');
+                }
+            };
+    
+            fetchAuthData();
+        }, []);
+    
 
     const handleImageUpload = async (file: File) => {
         setUploading(true);
-        const formData = new FormData();
-        formData.append('image', file);
+        const fileName = `${Date.now()}-${file.name}`;
 
         try {
-            const res = await fetch('https://api.imgur.com/3/image', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Client-ID ${IMGUR_CLIENT_ID}`,
-                },
-                body: formData,
-            });
+            const { error: uploadError } = await supabase.storage
+                .from('images')
+                .upload(fileName, file);
 
-            const data = await res.json();
-            if (data.success) {
-                setImgUrl(data.data.link);
-                setMessage('');
-            } else {
-                throw new Error('Erro ao enviar imagem');
-            }
+            if (uploadError) throw uploadError;
+
+            const { data: urlData } = supabase.storage
+                .from('images')
+                .getPublicUrl(fileName);
+
+            if (!urlData?.publicUrl) throw new Error('Erro ao gerar URL da imagem');
+
+            setImgUrl(urlData.publicUrl);
+            setMessage('');
         } catch (err) {
+            console.error(err);
             setMessage('❌ Erro ao fazer upload da imagem');
         } finally {
             setUploading(false);
@@ -54,12 +74,14 @@ const CreateItem = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     name,
                     price: parseFloat(price),
                     description,
                     imgUrl,
+                    providerId,
                 }),
             });
 
