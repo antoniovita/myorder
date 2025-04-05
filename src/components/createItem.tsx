@@ -8,7 +8,7 @@ const CreateItem = () => {
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imgUrl, setImgUrl] = useState('');
+    const [imagemUrl, setImagemUrl] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [uploading, setUploading] = useState(false);
@@ -51,7 +51,8 @@ const CreateItem = () => {
 
             if (!urlData?.publicUrl) throw new Error('Erro ao gerar URL da imagem');
 
-            setImgUrl(urlData.publicUrl);
+            setImagemUrl(urlData.publicUrl);
+            console.log(urlData.publicUrl)
             setMessage('');
         } catch (err) {
             console.error(err);
@@ -64,7 +65,7 @@ const CreateItem = () => {
     const handleCreateItem = async (e: any) => {
         e.preventDefault();
 
-        if (!imgUrl) {
+        if (!imagemUrl) {
             setMessage('⚠️ Por favor, envie uma imagem antes de criar o item.');
             return;
         }
@@ -80,7 +81,7 @@ const CreateItem = () => {
                     name,
                     price: parseFloat(price),
                     description,
-                    imgUrl,
+                    imgUrl: imagemUrl,
                     providerId,
                 }),
             });
@@ -92,7 +93,7 @@ const CreateItem = () => {
             setPrice('');
             setDescription('');
             setImageFile(null);
-            setImgUrl('');
+            setImagemUrl('');
         } catch (error: any) {
             setMessage(`❌ ${error.message}`);
         }
@@ -161,9 +162,9 @@ const CreateItem = () => {
                             <Loader2 className="animate-spin w-4 h-4" /> Enviando imagem...
                         </p>
                     )}
-                    {imgUrl && (
+                    {imagemUrl && (
                         <img
-                            src={imgUrl}
+                            src={imagemUrl}
                             alt="Preview"
                             className="mt-3 w-full h-48 object-cover rounded-xl border"
                         />

@@ -21,6 +21,7 @@ export const POST = async (req: NextRequest) => {
                 price: body.price,
                 description: body.description,
                 providerId: auth.id,
+                imgUrl: body.imgUrl,
             },
         });
 

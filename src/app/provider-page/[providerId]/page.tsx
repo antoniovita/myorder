@@ -49,7 +49,7 @@ const ProviderWelcomePage = () => {
                 throw new Error("Erro ao criar usuário.");
             }
 
-            Router.push("/items");
+            Router.push(`/provider-page/${providerId}/items`);
             setName("");
             setTableNumber("");
         } catch (err) {
