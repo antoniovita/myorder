@@ -117,7 +117,7 @@ const LoginPage = () => {
                         />
                     </div>
                     <button 
-                        className="w-full bg-yellow-400 hover:bg-yellow-600 text-black font-semibold py-2 rounded-xl mt-2 transition duration-300"
+                        className="w-full bg-blue-400 hover:bg-blue-600 text-white font-semibold py-2 rounded-xl mt-2 transition duration-300"
                         onClick={handleSubmit}
                     >
                         {isRegistering ? 'Criar Conta' : 'Entrar'}

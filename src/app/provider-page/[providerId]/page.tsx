@@ -89,7 +89,7 @@ const ProviderWelcomePage = () => {
 
                     <button
                         onClick={handleSubmit}
-                        className="bg-yellow-400 text-black font-semibold py-2 px-4 rounded-lg hover:bg-yellow-500 transition"
+                        className="bg-blue-400 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-500 transition"
                         disabled={loading}
                     >
                         {loading ? "Enviando..." : "Confirmar"}
