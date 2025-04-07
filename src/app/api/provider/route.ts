@@ -147,10 +147,11 @@ const PUT = async (req: NextRequest) => {
             return NextResponse.json({ message: "Usuário não autorizado." }, { status: 403 });
         }    
 
-        const updateData: { name?: string, description?: string } = {};
+        const updateData: { name?: string, description?: string , imgUrl?: string} = {};
 
         if (body.name) updateData.name = body.name;
         if (body.description) updateData.description = body.description;
+        if (body.imgUrl) updateData.imgUrl = body.imgUrl;
 
         const provider = await prisma.provider.update({
             where: { id: body.id },

@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react';
 import CreateItem from '@/components/createItem';
 import CreateTable from '@/components/createTable';
-import { Users, Table as TableIcon, ShoppingCart, Trash2 } from 'lucide-react'; // ícones
+import { Users, Table as TableIcon, ShoppingCart, Trash2, BadgeCheck, Clock, DollarSign } from 'lucide-react';
+import ChangeInfo from '@/components/changeInfo';
 
 const BusinessPage = () => {
     interface Table {
@@ -11,6 +12,7 @@ const BusinessPage = () => {
         number: number;
         user: User[];
         order: Order[];
+        createdAt?: string;
     }
 
     interface User {
@@ -19,6 +21,7 @@ const BusinessPage = () => {
         name: string;
         providerId: string;
         order: Order[];
+        createdAt?: string;
     }
 
     interface Order {
@@ -29,15 +32,32 @@ const BusinessPage = () => {
         status: string;
         providerId: string;
         date: string;
+        createdAt?: string;
     }
 
-    const [clients, setClients] = useState<User[]>([]);
+    interface OrderItem {
+        id: string;
+        itemId: string;
+        quantity: string;
+        orderId: string;
+        observation: string;
+        }
+
+    const [clients, setClients] = useState<(User & { order: Order, table: Table })[]>([]);
     const [tables, setTables] = useState<Table[]>([]);
-    const [orders, setOrders] = useState<Order[]>([]);
+    const [orders, setOrders] = useState<(Order & {orderItem: OrderItem}) []>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [providerId, setProviderId] = useState<string | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [expandedTables, setExpandedTables] = useState<string[]>([]);
+
+    const toggleExpandTable = (tableId: string) => {
+        setExpandedTables((prev) =>
+            prev.includes(tableId) ? prev.filter((id) => id !== tableId) : [...prev, tableId]
+        );
+    };
+    
 
     useEffect(() => {
         const fetchAuthData = async () => {
@@ -97,10 +117,8 @@ const BusinessPage = () => {
     }, [providerId, token]);
 
     const handleTableCreated = (newTable: Table) => {
-        console.log("Nova mesa criada:", newTable); 
         setTables((prev) => [...prev, newTable]);
     };
-    
 
     const handleDeleteTable = async (tableId: string) => {
         try {
@@ -141,11 +159,18 @@ const BusinessPage = () => {
                             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                                 <Users className="text-blue-600" /> Clientes
                             </h2>
-                            <ul className="space-y-2">
+                            <ul className="space-y-3">
                                 {clients.length > 0 ? (
                                     clients.map((client) => (
-                                        <li key={client.id} className="p-2 border border-gray-200 px-4 rounded-2xl bg-gray-50 transition">
-                                            {client.name}
+                                        <li key={client.id} className="p-3 border border-gray-200 rounded-2xl bg-gray-50 shadow-sm">
+                                            <div className="flex justify-between">
+                                                <span className="font-semibold">{client.name}</span>
+                                                <span className="text-sm text-gray-500">Mesa {client.table.number}</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm text-gray-600 mt-1">
+                                                <p>Status do Pedido: <span className="font-medium">{client.order.status}</span></p>
+                                                <p>R$ {client.order.price}</p>
+                                            </div>
                                         </li>
                                     ))
                                 ) : (
@@ -154,35 +179,72 @@ const BusinessPage = () => {
                             </ul>
                         </section>
 
-                        {/* Mesas */}
-                        <section className="bg-white border border-gray-200 rounded-2xl p-6">
+                        <section className="bg-white shadow-md border border-gray-200 rounded-2xl p-6">
                             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                                 <TableIcon className="text-green-600" /> Mesas
                             </h2>
-                            <ul className="space-y-2">
+                            <ul className="space-y-4">
                                 {tables.length > 0 ? (
-                                    tables.map((table) => (
-                                        <li key={table.id} className="p-2 flex flex-row justify-between border border-gray-200 px-5 rounded-2xl bg-gray-50 transition">
-                                            <h1>Mesa {table.number}</h1>
-                                            <button onClick={() => handleDeleteTable(table.id)}><Trash2 size={18} className="mt-1 text-red-500 cursor-pointer" /></button>
-                                        </li>
-                                    ))
+                                    tables.map((table) => {
+                                        const isExpanded = expandedTables.includes(table.id);
+                                        return (
+                                            <li key={table.id} className="p-3 rounded-2xl border border-gray-200 rounded-2xl bg-gray-50 shadow-sm">
+                                                <div className="flex justify-between items-center">
+                                                    <div>
+                                                        <p><strong>Mesa:</strong> {table.number}</p>
+                                                        <p><strong>Clientes:</strong> {table.user.length}</p>
+                                                        <p><strong>Pedidos:</strong> {table.order.length}</p>
+                                                    </div>
+                                                    <div className="flex gap-2 items-center">
+                                                        <button
+                                                            onClick={() => toggleExpandTable(table.id)}
+                                                            className="text-sm text-blue-600 underline hover:text-blue-800"
+                                                        >
+                                                            {isExpanded ? 'Esconder clientes' : 'Ver clientes'}
+                                                        </button>
+                                                        <button onClick={() => handleDeleteTable(table.id)}>
+                                                            <Trash2 size={20} className="text-red-500 hover:text-red-700 transition" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                {isExpanded && table.user.length > 0 && (
+                                                    <ul className="mt-4 space-y-2 bg-white p-2 rounded-xl border border-gray-300">
+                                                        {table.user.map((user) => (
+                                                            <li key={user.id} className="text-sm text-gray-700">
+                                                                <strong>Nome:</strong> {user.name}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                            </li>
+                                        );
+                                    })
                                 ) : (
                                     <p className="text-sm text-gray-500">Nenhuma mesa encontrada.</p>
                                 )}
                             </ul>
                         </section>
 
+
                         {/* Pedidos */}
                         <section className="bg-white border border-gray-200 rounded-2xl p-6 md:col-span-2">
                             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                                 <ShoppingCart className="text-purple-600" /> Pedidos
                             </h2>
-                            <ul className="space-y-2">
+                            <ul className="space-y-3">
                                 {orders.length > 0 ? (
                                     orders.map((order) => (
-                                        <li key={order.id} className="border p-2 rounded-lg hover:bg-gray-50 transition">
-                                            <span className="font-medium">Pedido #{order.id}</span> — {order.status} — <span className="text-green-600">R$ {order.price}</span>
+                                        <li key={order.id} className="border p-3 rounded-xl bg-gray-50 shadow-sm">
+                                            <div className="flex justify-between">
+                                                <span className="font-medium">Pedido #{order.id}</span>
+                                                <span className="text-sm text-gray-600">Mesa: {order.tableId}</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm text-gray-600 mt-1">
+                                                <p>Status: {order.status}</p>
+                                                <p><DollarSign size={14} className="inline" /> R$ {order.price}</p>
+                                                <p><Clock size={14} className="inline" /> {new Date(order.date).toLocaleString()}</p>
+                                            </div>
                                         </li>
                                     ))
                                 ) : (
@@ -192,11 +254,12 @@ const BusinessPage = () => {
                         </section>
                     </div>
 
-                    {/* Criar Mesa e Criar Item */}
-                    <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <CreateTable onTableCreated={handleTableCreated} />
-                    <CreateItem />
+                    <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <CreateTable onTableCreated={handleTableCreated} />
+                        <CreateItem />
+                        <ChangeInfo />
                     </div>
+
                 </>
             )}
         </div>
