@@ -12,6 +12,7 @@
     "@prisma/client": "^6.5.0",
     "@supabase/supabase-js": "^2.49.4",
     "bcrypt": "^5.1.1",
+    "classnames": "^2.5.1",
     "framer-motion": "^12.6.3",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",

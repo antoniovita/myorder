@@ -41,7 +41,7 @@ const BusinessPage = () => {
         quantity: string;
         orderId: string;
         observation: string;
-        }
+    }
 
     const [clients, setClients] = useState<(User & { order: Order, table: Table })[]>([]);
     const [tables, setTables] = useState<Table[]>([]);
@@ -57,7 +57,6 @@ const BusinessPage = () => {
             prev.includes(tableId) ? prev.filter((id) => id !== tableId) : [...prev, tableId]
         );
     };
-    
 
     useEffect(() => {
         const fetchAuthData = async () => {
@@ -144,18 +143,15 @@ const BusinessPage = () => {
     if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
     return (
-        <div className="min-h-screen bg-white p-6 text-black">
+        <div className="min-h-screen bg-gray-100 p-6 text-black">
             {!token && !loading ? (
                 <h1 className="text-center mt-10 text-red-500">
                     Você precisa estar logado para ver o painel do restaurante
                 </h1>
             ) : (
                 <>
-                    <h1 className="text-4xl font-bold text-center mb-10 text-gray-800">Painel do Restaurante</h1>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Clientes */}
-                        <section className="bg-white border border-gray-200 rounded-2xl p-6">
+                    <div className="flex bg-gray-100 flex-col md:flex-row md:items-start gap-6 w-full">
+                        <section className="bg-white border border-gray-300 rounded-2xl p-6 w-full md:w-1/3">
                             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                                 <Users className="text-blue-600" /> Clientes
                             </h2>
@@ -179,7 +175,7 @@ const BusinessPage = () => {
                             </ul>
                         </section>
 
-                        <section className="bg-white shadow-md border border-gray-200 rounded-2xl p-6">
+                        <section className="bg-white border border-gray-300 rounded-2xl p-6 w-full md:w-1/3">
                             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                                 <TableIcon className="text-green-600" /> Mesas
                             </h2>
@@ -188,7 +184,7 @@ const BusinessPage = () => {
                                     tables.map((table) => {
                                         const isExpanded = expandedTables.includes(table.id);
                                         return (
-                                            <li key={table.id} className="p-3 rounded-2xl border border-gray-200 rounded-2xl bg-gray-50 shadow-sm">
+                                            <li key={table.id} className="p-3 border border-gray-200 rounded-2xl bg-gray-50 shadow-sm">
                                                 <div className="flex justify-between items-center">
                                                     <div>
                                                         <p><strong>Mesa:</strong> {table.number}</p>
@@ -226,9 +222,7 @@ const BusinessPage = () => {
                             </ul>
                         </section>
 
-
-                        {/* Pedidos */}
-                        <section className="bg-white border border-gray-200 rounded-2xl p-6 md:col-span-2">
+                        <section className="bg-white border border-gray-300 rounded-2xl p-6 w-full md:w-1/3">
                             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                                 <ShoppingCart className="text-purple-600" /> Pedidos
                             </h2>
@@ -253,12 +247,6 @@ const BusinessPage = () => {
                             </ul>
                         </section>
                     </div>
-
-                    <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <CreateTable onTableCreated={handleTableCreated} />
-                        <CreateItem />
-                    </div>
-
                 </>
             )}
         </div>

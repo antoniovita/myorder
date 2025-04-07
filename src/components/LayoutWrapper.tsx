@@ -8,6 +8,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   const noLayoutPages = [
     "/provider-page",
+    "/business"
   ];
 
   const shouldRenderLayout = !noLayoutPages.some((path) => pathname.startsWith(path));

@@ -52,7 +52,7 @@ const ProviderWelcomePage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 flex items-center justify-center px-4">
-            <div className="bg-white border mt-[100px] border-gray-200 shadow-xl rounded-2xl max-w-md w-full p-8">
+            <div className="bg-white border border-gray-200 shadow-xl rounded-2xl max-w-md w-full p-8">
                 {/* Imagem do provedor */}
                 <div className="flex justify-center mb-6">
                     {providerData.imgUrl ? (

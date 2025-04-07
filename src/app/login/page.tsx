@@ -76,7 +76,7 @@ const LoginPage = () => {
                                     id="name" 
                                     type="text" 
                                     placeholder="Seu nome completo" 
-                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
                                     value={formData.name}
                                     onChange={handleChange}
                                 />
@@ -87,7 +87,7 @@ const LoginPage = () => {
                                     id="description" 
                                     type="text" 
                                     placeholder="Fale um pouco sobre seu negócio..." 
-                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
                                     value={formData.description}
                                     onChange={handleChange}
                                 />
@@ -100,7 +100,7 @@ const LoginPage = () => {
                             id="email" 
                             type="email" 
                             placeholder="carlos@example.com" 
-                            className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                             value={formData.email}
                             onChange={handleChange}
                         />
@@ -111,13 +111,13 @@ const LoginPage = () => {
                             id="password" 
                             type="password" 
                             placeholder="Insira sua senha..." 
-                            className="w-full border-gray-300 border text-black rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            className="w-full border-gray-300 border text-black rounded-xl px-3 py-2 focus:ring-1 focus:ring-gray-500 focus:outline-none"
                             value={formData.password}
                             onChange={handleChange}
                         />
                     </div>
                     <button 
-                        className="w-full bg-blue-400 hover:bg-blue-600 text-white font-semibold py-2 rounded-xl mt-2 transition duration-300"
+                        className="w-full bg-orange-400 hover:bg-orange-600 text-white font-semibold py-2 rounded-xl mt-2 transition duration-300"
                         onClick={handleSubmit}
                     >
                         {isRegistering ? 'Criar Conta' : 'Entrar'}
