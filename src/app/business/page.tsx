@@ -257,7 +257,6 @@ const BusinessPage = () => {
                     <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
                         <CreateTable onTableCreated={handleTableCreated} />
                         <CreateItem />
-                        <ChangeInfo />
                     </div>
 
                 </>

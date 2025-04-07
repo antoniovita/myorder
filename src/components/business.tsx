@@ -7,7 +7,7 @@ const BusinessComponent = () => {
 
         <div className="flex-1">
           <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
-            Dashboard ideal para o <span className="text-blue-400">seu negócio</span>
+            Dashboard ideal para o <span className="text-orange-400">seu negócio</span>
           </h1>
           <p className="text-lg text-gray-600 mt-4">
             Transforme a experiência dos seus clientes com um cardápio digital
@@ -22,7 +22,7 @@ const BusinessComponent = () => {
               "Sem necessidade de impressão",
             ].map((item, index) => (
               <div key={index} className="flex items-start gap-3">
-                <CheckCircle className="text-blue-400 w-6 h-6 mt-1" />
+                <CheckCircle className="text-orange-400 w-6 h-6 mt-1" />
                 <span className="text-gray-700 text-md mt-1">{item}</span>
               </div>
             ))}

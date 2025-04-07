@@ -8,7 +8,7 @@ const AboutUs = () => {
 
         <div className="flex-1 text-center md:text-left">
           <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
-            Um pouco sobre <span className="text-blue-400">nós</span>
+            Um pouco sobre <span className="text-orange-400">nós</span>
           </h1>
           <p className="text-lg text-gray-600 mt-6 leading-relaxed">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae assumenda

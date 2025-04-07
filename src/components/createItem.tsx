@@ -110,7 +110,7 @@ const CreateItem = () => {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full px-4 py-2 border bg-gray-50 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                        className="w-full px-4 py-2 border bg-gray-50 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
                         required
                     />
                 </div>
@@ -122,7 +122,7 @@ const CreateItem = () => {
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
                         step="0.01"
-                        className="w-full px-4 py-2 border bg-gray-50 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                        className="w-full px-4 py-2 border bg-gray-50 border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
                         required
                     />
                 </div>
@@ -132,7 +132,7 @@ const CreateItem = () => {
                     <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
                         required
                         rows={3}
                     />
@@ -140,7 +140,7 @@ const CreateItem = () => {
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Imagem</label>
-                    <label className="flex items-center gap-2 cursor-pointer w-full px-4 py-2 border border-dashed border-gray-400 rounded-xl hover:border-blue-400 transition">
+                    <label className="flex items-center gap-2 cursor-pointer w-full px-4 py-2 border border-dashed border-gray-400 rounded-xl hover:border-orange-400 transition">
                         <ImagePlus className="w-5 h-5 text-gray-500" />
                         <span className="text-gray-600 text-sm">Escolher imagem...</span>
                         <input
@@ -173,7 +173,7 @@ const CreateItem = () => {
 
                 <button
                     type="submit"
-                    className={`flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-xl transition ${
+                    className={`flex justify-center items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-medium py-2 px-4 rounded-xl transition ${
                         uploading && 'opacity-60 cursor-not-allowed'
                     }`}
                     disabled={uploading}

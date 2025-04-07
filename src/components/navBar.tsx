@@ -28,13 +28,13 @@ export default function NavBar() {
           }, []);
 
   return (
-    <nav className="bg-blue-400 text-white py-6 px-6 md:px-12 fixed top-0 left-0 w-full z-50 shadow-md transition-all">
+    <nav className="bg-orange-500 text-white py-6 px-6 md:px-12 fixed top-0 left-0 w-full z-50 shadow-md transition-all">
       <div className="relative flex items-center justify-center max-w-7xl mx-auto">
 
         <div className="absolute left-0">
           <Link 
             href="/business"
-            className="bg-white text-blue-500 px-4 py-2 rounded-xl font-semibold text-sm shadow hover:bg-gray-100 transition"
+            className="bg-white text-orange-500 px-4 py-2 rounded-xl font-semibold text-sm shadow hover:bg-gray-100 transition"
           >
             Dashboard
           </Link>
@@ -53,10 +53,10 @@ export default function NavBar() {
             <Info size={18} /> About
           </Link>
           <Link className="hover:text-white transition flex items-center gap-2" href="/services">
-            <Briefcase size={18} /> Services
+            <Briefcase size={18} /> Planos
           </Link>
           <Link className="hover:text-white transition flex items-center gap-2" href="/contact">
-            <Phone size={18} /> Contact
+            <Phone size={18} /> Contato
           </Link>
 
           {!token ? (
@@ -64,7 +64,7 @@ export default function NavBar() {
               <LogIn size={18} /> Login
             </Link>
           ) : (
-            <div className="flex items-center gap-2 bg-blue-500 text-blue-500 p-2 border border-white rounded-full">
+            <div className="flex items-center gap-2 bg-orange-500 text-orange-500 p-2 border border-white rounded-full">
               <Link href={'account'}> <UserRound color='white' /> </Link>
             </div>
           )}
@@ -72,7 +72,7 @@ export default function NavBar() {
       </div>
 
       {isOpen && (
-        <div className="md:hidden flex flex-col gap-4 p-4 mt-2 rounded-lg transition-all bg-blue-400 text-white">
+        <div className="md:hidden flex flex-col gap-4 p-4 mt-2 rounded-lg transition-all bg-orange-600 text-white">
           <Link className="flex items-center gap-2" href="/about" onClick={() => setIsOpen(false)}>
             <Info size={18} /> About
           </Link>
@@ -88,8 +88,8 @@ export default function NavBar() {
               <LogIn size={18} /> Login
             </Link>
           ) : (
-            <div className="flex items-center gap-2 bg-white text-blue-500 px-3 py-1 rounded-xl font-semibold text-sm shadow hover:bg-gray-100 transition">
-              ✅ Logado
+            <div className="flex items-center w-[50px] rounded-full bg-orange-600">
+              <Link href={'account'}> <UserRound color='white' /> </Link>
             </div>
           )}
         </div>

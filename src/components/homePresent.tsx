@@ -9,7 +9,7 @@ const HomePresent = () => {
 
         <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left gap-6">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 leading-tight">
-            Crie um <span className="text-blue-400">Cardápio Digital</span>
+            crie o seu <span className="text-orange-400">cardápio digital</span>
           </h1>
           <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
             Transforme a experiência dos seus clientes com um cardápio digital interativo, bonito e fácil de usar.
@@ -17,12 +17,12 @@ const HomePresent = () => {
           </p>
           <div className="flex flex-row gap-4">
             <div className="flex mt-1 flex-row gap-4">
-              <CornerDownRight className="text-blue-400" size={30} />
+              <CornerDownRight className="text-orange-400" size={30} />
               <h1 className="mt-2 text-black font-semibold"> Faça a escolha certa</h1>
             </div>
             <Link
               href="/criar"
-              className="bg-blue-400 text-white font-semibold px-8 py-3 rounded-xl shadow-md hover:bg-blue-500 transition"
+              className="bg-orange-400 text-white font-semibold px-8 py-3 rounded-xl shadow-md hover:bg-orange-500 transition"
             >
               Crie agora
             </Link>

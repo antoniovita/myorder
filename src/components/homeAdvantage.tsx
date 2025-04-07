@@ -10,11 +10,8 @@ const steps = [
 
 const HomeAdvantage = () => {
   return (
-    <section className="bg-white py-16 px-6">
+    <section className="bg-white py-12 px-6">
       <div className="max-w-6xl mx-auto flex flex-col items-center gap-10">
-        <h2 className="text-3xl md:text-4xl md:mb-4 font-extrabold text-gray-900 text-center">
-          Como funciona?
-        </h2>
 
         <div className="flex flex-col md:flex-row justify-center items-center gap-8 flex-wrap">
           {steps.map((step, index) => (
@@ -24,7 +21,7 @@ const HomeAdvantage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.2 }}
-              className="relative flex flex-col items-center bg-blue-400 rounded-3xl shadow-xl w-[220px] h-[220px] p-4 text-center"
+              className="relative flex flex-col items-center bg-orange-400 rounded-3xl shadow-xl w-[220px] h-[220px] p-4 text-center"
             >
               {/* Número no topo */}
               <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-white text-black font-bold text-lg rounded-full w-10 h-10 flex items-center justify-center shadow-md">
