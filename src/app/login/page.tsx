@@ -12,7 +12,10 @@ const LoginPage = () => {
         name: '',
         description: '',
         email: '',
-        password: ''
+        password: '',
+        cpf: '',
+        phone: '',
+        owner: '' // novo campo
     });
 
     useEffect(() => {
@@ -46,8 +49,6 @@ const LoginPage = () => {
 
         if (response.ok) {
             const data = await response.json();
-            console.log(data);
-
             Cookies.set('token', data.token, { expires: 7 });
             router.push('/business');
         } else {
@@ -62,7 +63,7 @@ const LoginPage = () => {
                 <Image src={'/thinking1.png'} alt={''} width={400} height={400} />
             </div>
             }
-            <div className="w-full max-w-sm bg-white border border-gray-300 rounded-2xl shadow-lg p-6 flex flex-col items-center">
+            <div className="w-full max-w-sm bg-white border border-gray-300 rounded-2xl mt-10 shadow-lg p-6 flex flex-col items-center">
                 <h1 className="font-bold text-xl mb-4 text-gray-800">{isRegistering ? 'Crie uma conta!' : 'Faça login'}</h1>
                 <p className="text-gray-600 text-sm mb-4">
                     {isRegistering ? 'Preencha os campos abaixo para se registrar.' : 'Entre com seu email e senha para continuar'}
@@ -75,9 +76,20 @@ const LoginPage = () => {
                                 <input 
                                     id="name" 
                                     type="text" 
-                                    placeholder="Seu nome completo" 
+                                    placeholder="Seu restaurante" 
                                     className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
                                     value={formData.name}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 mb-3">
+                                <label htmlFor="owner" className="text-gray-700 text-sm">Nome do Dono</label>
+                                <input 
+                                    id="owner" 
+                                    type="text" 
+                                    placeholder="Nome completo do dono" 
+                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                                    value={formData.owner}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -89,6 +101,28 @@ const LoginPage = () => {
                                     placeholder="Fale um pouco sobre seu negócio..." 
                                     className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
                                     value={formData.description}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 mb-3">
+                                <label htmlFor="cpf" className="text-gray-700 text-sm">CPF</label>
+                                <input 
+                                    id="cpf" 
+                                    type="text" 
+                                    placeholder="000.000.000-00" 
+                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                                    value={formData.cpf}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2 mb-3">
+                                <label htmlFor="phone" className="text-gray-700 text-sm">Telefone</label>
+                                <input 
+                                    id="phone" 
+                                    type="text" 
+                                    placeholder="(21) 91234-5678" 
+                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                                    value={formData.phone}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -133,5 +167,5 @@ const LoginPage = () => {
         </div>
     );
 }
- 
+
 export default LoginPage;

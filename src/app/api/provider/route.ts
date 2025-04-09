@@ -10,6 +10,18 @@ const validateEmail = (email: string) => {
     return regex.test(email);
 };
 
+const validateCPF = (cpf: string) => {
+    const regex = /^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/;
+    return regex.test(cpf);
+  };
+
+const validatePhoneNumber = (number: string) => {
+  const regex = /^\(?\d{2}\)?[\s-]?\d{4,5}-?\d{4}$/;
+  return regex.test(number);
+};
+  
+  
+
 const POST = async (req: NextRequest) => {
     try {
         const body = await req.json();
@@ -20,7 +32,7 @@ const POST = async (req: NextRequest) => {
         }
 
         if (action === 'register') {
-            if (!body.name || !body.email || !body.password) {
+            if (!body.name || !body.email || !body.password || !body.cpf || !body.phone || !body.owner) {
                 return NextResponse.json({ message: 'Todos os campos são obrigatórios.' }, { status: 400 });
             }
 
@@ -28,6 +40,14 @@ const POST = async (req: NextRequest) => {
                 return NextResponse.json({ message: 'Email inválido.' }, { status: 400 });
             }
 
+            if (!validateCPF(body.cpf)) {
+                return NextResponse.json({ message: 'CPF inválido.' }, { status: 400 });
+            }
+            
+            if (!validatePhoneNumber(body.phone)) {
+                return NextResponse.json({ message: 'Número de telefone inválido.' }, { status: 400 });
+            }
+            
             const existingProvider = await prisma.provider.findUnique({
                 where: { email: body.email },
             });
@@ -42,7 +62,10 @@ const POST = async (req: NextRequest) => {
                     name: body.name,
                     email: body.email,
                     password: hashedPassword,
-                    description: body.description || null
+                    description: body.description || null,
+                    cpf: body.cpf,
+                    phone: body.phone,
+                    owner: body.owner
                 }
             });
 
@@ -147,11 +170,13 @@ const PUT = async (req: NextRequest) => {
             return NextResponse.json({ message: "Usuário não autorizado." }, { status: 403 });
         }    
 
-        const updateData: { name?: string, description?: string , imgUrl?: string} = {};
+        const updateData: { name?: string, description?: string , imgUrl?: string, phone?: string, owner?: string} = {};
 
         if (body.name) updateData.name = body.name;
         if (body.description) updateData.description = body.description;
         if (body.imgUrl) updateData.imgUrl = body.imgUrl;
+        if (body.phone) updateData.phone = body.phone;
+        if (body.owner) updateData.owner = body.owner;
 
         const provider = await prisma.provider.update({
             where: { id: body.id },

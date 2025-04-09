@@ -4,21 +4,27 @@ import { prisma } from "../../../lib/prisma";
 export const DELETE = async (req: NextRequest) => {
     try {
         const body = await req.json();
-        
-        if (!body.tableId) {
-            return NextResponse.json({ message: "tableId, userId, providerId e price são obrigatórios." }, { status: 400 });
+
+        const { tableId } = body;
+
+        if (!tableId) {
+            return NextResponse.json({ message: "tableId é obrigatório." }, { status: 400 });
         }
 
-        const user = await prisma.user.delete({ where: { tableId: body.tableId}
+        const deletedUsers = await prisma.user.deleteMany({
+            where: { tableId },
         });
 
-        return NextResponse.json({message: "Mesa foi limpa foi com sucesso."})
+        return NextResponse.json({
+            message: "Todos os usuários da mesa foram apagados com sucesso.",
+            count: deletedUsers.count,
+        });
+
     } catch (error) {
         console.error("Erro ao limpar a mesa.", error);
         return NextResponse.json({ message: "Erro ao limpar mesa." }, { status: 500 });
     }
 };
-
 
 export const PUT = async (req: NextRequest) => {
     try {
@@ -29,20 +35,21 @@ export const PUT = async (req: NextRequest) => {
             return NextResponse.json({ message: "ID é obrigatório." }, { status: 400 });
         }
 
-        const body = await req.json();
-
         const existingOrder = await prisma.order.findUnique({ where: { id } });
 
         if (!existingOrder) {
             return NextResponse.json({ message: "Pedido não encontrado." }, { status: 404 });
         }
 
-        const order = await prisma.order.update({
+        const updatedOrder = await prisma.order.update({
             where: { id },
-            data: { status: 'finalizado' },
+            data: { status: "finalizado" },
         });
 
-        return NextResponse.json({ message: "Pedido atualizado com sucesso!", order }, { status: 200 });
+        return NextResponse.json({
+            message: "Pedido atualizado com sucesso!",
+            order: updatedOrder
+        }, { status: 200 });
 
     } catch (error) {
         console.error("Erro ao atualizar pedido:", error);

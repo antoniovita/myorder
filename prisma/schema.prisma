@@ -13,6 +13,9 @@ model Provider {
   password    String
   name        String
   description String?
+  cpf         String
+  owner       String
+  phone       String
   imgUrl      String?
   user        User[]
   item        Item[]
