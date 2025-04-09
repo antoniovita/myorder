@@ -15,7 +15,7 @@ export const POST = async (req: NextRequest) => {
                 userId: body.userId,
                 providerId: body.providerId,
                 price: body.price,
-                status: "pending",
+                status: "ativo",
                 date: new Date(),
             },
             include: {
@@ -47,7 +47,7 @@ export const GET = async (req: NextRequest) => {
 
         let whereCondition = {};
         if (providerId) whereCondition = { providerId };
-        else if (tableId) whereCondition = { tableId };
+        else if (tableId) whereCondition = { tableId, status: 'ativo' };
         else if (userId) whereCondition = { userId };
 
         const orders = await prisma.order.findMany({
