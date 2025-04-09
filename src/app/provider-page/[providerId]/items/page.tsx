@@ -36,30 +36,7 @@ export default function ItemsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 py-12 px-6">
-      {/* Navigation */}
-      <div className="max-w-6xl mx-auto mb-10">
-        <nav className="flex justify-center gap-6 flex-wrap text-gray-700 font-medium text-base">
-          <Link href="/" className="flex items-center gap-2 hover:text-blue-600 transition">
-            <Home size={18} /> Início
-          </Link>
-          <Link href="/cart" className="flex items-center gap-2 hover:text-blue-600 transition">
-            <ShoppingCart size={18} /> Carrinho
-          </Link>
-          <Link
-            href={`/provider/${providerId}/dashboard`}
-            className="flex items-center gap-2 hover:text-blue-600 transition"
-          >
-            <LayoutDashboard size={18} /> Dashboard
-          </Link>
-        </nav>
-      </div>
-
-      {/* Title */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800">Produtos Disponíveis</h1>
-        <p className="text-gray-500 mt-2">Confira os itens que você pode oferecer aos clientes</p>
-      </div>
-
+      
       {/* Products Grid */}
       <div className="max-w-6xl mx-auto">
         {items.length > 0 ? (

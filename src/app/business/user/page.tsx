@@ -105,7 +105,7 @@ const DashboardUser = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 flex justify-center items-start">
-      <div className=" bg-gray-50  p-3 rounded-2xl border border-gray-300 w-full max-w-7xl space-y-6">
+      <div className=" bg-white  p-3 rounded-2xl border border-gray-300 w-full max-w-7xl space-y-6">
         <div className="flex px-4 flex-row gap-2 py-2">
           <Users className="text-blue-600 mt-1.5" /> 
           <h1 className="text-3xl font-bold text-gray-800">Clientes</h1>
