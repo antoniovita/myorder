@@ -23,12 +23,12 @@ const HomeAdvantage = () => {
               transition={{ duration: 0.5, delay: index * 0.2 }}
               className="relative flex flex-col items-center bg-orange-400 rounded-3xl shadow-xl w-[220px] h-[220px] p-4 text-center"
             >
-              {/* Número no topo */}
+
               <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-white text-black font-bold text-lg rounded-full w-10 h-10 flex items-center justify-center shadow-md">
                 {step.number}
               </div>
 
-              {/* Conteúdo */}
+
               <h3 className="text-lg font-bold text-white mt-8">{step.title}</h3>
               <p className="text-sm text-white mt-2">{step.description}</p>
             </motion.div>

@@ -53,7 +53,7 @@ const ProviderWelcomePage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 flex items-center justify-center px-4">
             <div className="bg-white border border-gray-200 shadow-xl rounded-2xl max-w-md w-full p-8">
-                {/* Imagem do provedor */}
+
                 <div className="flex justify-center mb-6">
                     {providerData.imgUrl ? (
                         <Image
@@ -61,7 +61,7 @@ const ProviderWelcomePage = () => {
                             alt="Provider Image"
                             width={180}
                             height={180}
-                            className="rounded-full object-cover border-2 border-blue-300"
+                            className="aspect-square w-44 h-44 rounded-full object-cover border-2 border-blue-300"
                         />
                     ) : (
                         <div className="w-44 h-44 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
@@ -70,13 +70,12 @@ const ProviderWelcomePage = () => {
                     )}
                 </div>
 
-                {/* Boas-vindas */}
+
                 <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">
                     Bem-vindo ao {providerData.name}!
                 </h1>
-                <p className="text-center text-gray-600 mb-6">{providerData.description}</p>
+                <p className="px-3 text-center text-gray-600 text-sm mb-6 line-clamp-2">{providerData.description}</p>
 
-                {/* Formulário */}
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Seu nome</label>
