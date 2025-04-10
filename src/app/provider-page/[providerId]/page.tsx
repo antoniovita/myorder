@@ -52,7 +52,7 @@ const ProviderWelcomePage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 flex items-center justify-center px-4">
-            <div className="bg-white border border-gray-200 shadow-xl rounded-2xl max-w-md w-full p-8">
+            <div className="bg-white border border-gray-200 shadow-xl flex flex-col gap-3 rounded-2xl max-w-md w-full p-8">
 
                 <div className="flex justify-center mb-6">
                     {providerData.imgUrl ? (
@@ -74,10 +74,9 @@ const ProviderWelcomePage = () => {
                 <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">
                     Bem-vindo ao {providerData.name}!
                 </h1>
-                <p className="px-3 text-center text-gray-600 text-sm mb-6 line-clamp-2">{providerData.description}</p>
 
                 <div className="space-y-4">
-                    <div>
+                    <div className="py-3">
                         <label className="block text-sm font-medium text-gray-700 mb-1">Seu nome</label>
                         <input
                             type="text"

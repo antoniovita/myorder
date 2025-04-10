@@ -1,19 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp, Users, User as UserIcon, ReceiptText } from "lucide-react";
+import { ChevronDown, ChevronUp, Users, User, ReceiptText } from "lucide-react";
 
 const DashboardUser = () => {
   interface Table {
     id: string;
     providerId: string;
     number: number;
-    user: User[];
+    user: UserType[];
     order: Order[];
     createdAt?: string;
   }
 
-  interface User {
+  interface UserType {
     id: string;
     tableId: string;
     name: string;
@@ -34,7 +34,7 @@ const DashboardUser = () => {
     createdAt?: string;
   }
 
-  const [clients, setClients] = useState<User[]>([]);
+  const [clients, setClients] = useState<UserType[]>([]);
   const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -94,12 +94,12 @@ const DashboardUser = () => {
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 flex justify-center items-start">
-      <div className="bg-white p-6 rounded-2xl border border-gray-200 w-full max-w-7xl shadow-sm">
+    <div className="min-h-screen bg-gray-100 p-4 flex justify-center items-start">
+      <div className="bg-white p-6 rounded-2xl border border-gray-200 w-full">
         <div className="flex items-center gap-2 mb-6">
           <Users className="text-blue-600" />
-          <h1 className="text-3xl font-bold text-gray-800">Clientes</h1>
-          <span className="ml-auto text-sm text-gray-600">Total: {clients.length}</span>
+          <h1 className="text-2xl font-bold text-blue-600">Clientes</h1>
+          <span className="ml-auto text-sm text-gray-500">Total: {clients.length}</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -107,10 +107,12 @@ const DashboardUser = () => {
             clients.map((client) => (
               <div
                 key={client.id}
-                className="bg-gray-100 rounded-2xl border border-gray-300 p-4 flex flex-col shadow-md hover:shadow-lg transition-shadow"
+                className="bg-white rounded-2xl border border-gray-200 p-4 flex flex-col transition-shadow"
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <UserIcon className="text-blue-500 w-5 h-5" />
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="bg-blue-100 text-blue-600 p-2 rounded-full">
+                    <User className="w-5 h-5" />
+                  </div>
                   <div>
                     <h2 className="font-semibold text-gray-800 text-lg">{client.name}</h2>
                     <p className="text-sm text-gray-500">Mesa {client.table?.number ?? "N/A"}</p>
@@ -121,7 +123,7 @@ const DashboardUser = () => {
                   client.order.map((order) => (
                     <div
                       key={order.id}
-                      className="mt-3 bg-white rounded-xl p-3 border border-gray-200 shadow-sm"
+                      className="mt-3 bg-gray-50 rounded-xl p-3 border border-gray-200"
                     >
                       <div
                         className="flex justify-between items-center cursor-pointer"
@@ -151,7 +153,7 @@ const DashboardUser = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500 mt-2">Nenhum pedido ainda.</p>
+                  <p className="text-sm text-gray-400 mt-2">Nenhum pedido ainda.</p>
                 )}
               </div>
             ))

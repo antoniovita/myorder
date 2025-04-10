@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, CheckCircle, AlertCircle, Info } from "lucide-react";
 
 const ProfileForm = () => {
   const [error, setError] = useState("");
@@ -44,7 +44,6 @@ const ProfileForm = () => {
         });
 
         if (!providerRes.ok) throw new Error("Erro ao carregar dados do perfil.");
-
         const providerData = await providerRes.json();
 
         setName(providerData.name || "");
@@ -116,104 +115,87 @@ const ProfileForm = () => {
   };
 
   return (
-    <div className="w-full h-full p-6 bg-white rounded-xl shadow-sm">
-      <h1 className="text-2xl font-semibold mb-4">Meu Perfil</h1>
+    <div className="w-full p-6 mt-5 bg-white border border-gray-200 rounded-2xl shadow-md space-y-6">
+      <h1 className="text-3xl font-bold">Meu Perfil</h1>
 
-      {error && <p className="text-red-600 mb-2">{error}</p>}
-      {success && <p className="text-green-600 mb-2">{success}</p>}
-      {message && <p className="text-blue-600 mb-2">{message}</p>}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="gap-3 flex flex-col">
-          <Label htmlFor="name">Nome</Label>
-          <Input
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            disabled={loading}
-            className="w-full"
-          />
+      {error && (
+        <div className="flex items-center gap-2 text-red-600">
+          <AlertCircle size={20} /> <span>{error}</span>
         </div>
-
-        <div className="gap-3 flex flex-col">
-          <Label htmlFor="cpf">CPF</Label>
-          <Input
-            id="cpf"
-            value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
-            disabled={loading}
-            className="w-full"
-          />
+      )}
+      {success && (
+        <div className="flex items-center gap-2 text-green-600">
+          <CheckCircle size={20} /> <span>{success}</span>
         </div>
-
-        <div className="gap-3 flex flex-col">
-          <Label htmlFor="phone">Número</Label>
-          <Input
-            id="phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            disabled={loading}
-            className="w-full"
-          />
+      )}
+      {message && (
+        <div className="flex items-center gap-2 text-blue-600">
+          <Info size={20} /> <span>{message}</span>
         </div>
+      )}
 
-        <div className="gap-3 flex flex-col">
-          <Label htmlFor="owner">Dono</Label>
-          <Input
-            id="owner"
-            value={owner}
-            onChange={(e) => setOwner(e.target.value)}
-            disabled={loading}
-            className="w-full"
-          />
-        </div>
-
-        <div className="gap-3 flex flex-col">
-          <Label htmlFor="description">Descrição</Label>
-          <Textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            disabled={loading}
-            className="w-full"
-          />
-        </div>
-
-        <div>
-          <Label>Foto de Perfil</Label>
-
-          <div className="flex items-start flex-col gap-4 mt-2">
-            <label className="cursor-pointer flex items-center gap-4 px-4 py-2 bg-orange-100 text-orange-600 rounded-lg font-medium hover:bg-orange-200 transition">
-              <UploadCloud size={18} />
-              {uploading ? "Enviando..." : "Selecionar Imagem"}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  if (e.target.files?.[0]) handleImageUpload(e.target.files[0]);
-                }}
-                disabled={uploading || loading}
-                hidden
-              />
-            </label>
-
-            {imgUrl && (
-              <div className="relative w-20 h-20">
-                <Image
-                  src={imgUrl}
-                  alt="Foto de Perfil"
-                  fill
-                  className="object-cover border"
-                />
-              </div>
-            )}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Formulário */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="grid grid-cols-1 gap-3">
+            <Label htmlFor="name">Nome</Label>
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} disabled={loading} />
           </div>
-        </div>
 
-        <Button type="submit" disabled={loading} className="w-full">
-          {loading ? "Salvando..." : "Salvar Alterações"}
-        </Button>
-      </form>
+          <div className="grid grid-cols-1 gap-3">
+            <Label htmlFor="cpf">CPF</Label>
+            <Input id="cpf" value={cpf} onChange={(e) => setCpf(e.target.value)} disabled={loading} />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
+            <Label htmlFor="phone">Número</Label>
+            <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
+            <Label htmlFor="owner">Dono</Label>
+            <Input id="owner" value={owner} onChange={(e) => setOwner(e.target.value)} disabled={loading} />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
+            <Label htmlFor="description">Descrição</Label>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              disabled={loading}
+              className="min-h-[100px]"
+            />
+          </div>
+
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Salvando..." : "Salvar Alterações"}
+          </Button>
+        </form>
+
+
+        <div className="flex flex-col items-center justify-center gap-6 rounded-lg border p-6 shadow-md">
+          {imgUrl && (
+            <div className="relative w-64 h-64 rounded-2xl overflow-hidden border shadow-md transition-transform duration-200">
+              <Image src={imgUrl} alt="Foto de Perfil" fill className="object-cover" />
+            </div>
+          )}
+
+          <label className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium">
+            <UploadCloud size={20} />
+            {uploading ? "Enviando..." : "Selecionar Imagem"}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files?.[0]) handleImageUpload(e.target.files[0]);
+              }}
+              disabled={uploading || loading}
+              hidden
+            />
+          </label>
+        </div>
+      </div>
     </div>
   );
 };

@@ -86,13 +86,15 @@ const DashboardTable = () => {
       });
       if (!res.ok) throw new Error("Erro ao carregar mesas.");
       const data = await res.json();
-      setTables(data);
+
+      setTables(data.sort((a: Table, b: Table) => a.number - b.number));
     } catch (err) {
       setError("Erro ao buscar mesas. Verifique a conexão.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleCreateTable = async () => {
     if (!tableNumber) {
@@ -131,6 +133,45 @@ const DashboardTable = () => {
     }
   };
 
+  const handleCleanTable = async (tableId: string) => {
+    if (!token || !providerId) {
+      setCreateError("Credenciais inválidas.");
+      return;
+    }
+  
+    setCreating(true);
+    setCreateError("");
+    try {
+      const res = await fetch(`/api/adm`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          tableId,
+        })
+      });
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Erro ao limpar mesa.");
+      }
+
+      setTables((prevTables) =>
+        prevTables.map((table) =>
+          table.id === tableId ? { ...table, user: [], order: [] } : table
+        )
+      );
+    } catch (error) {
+      setCreateError(error instanceof Error ? error.message : "Erro inesperado");
+    } finally {
+      setCreating(false);
+    }
+  };
+  
+
+
   const handleDeleteTable = async (tableId: string) => {
     if (!token) return;
 
@@ -164,11 +205,11 @@ const DashboardTable = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 flex justify-center items-start">
-      <div className="bg-white p-3 rounded-2xl border border-gray-300 w-full max-w-7xl space-y-6">
+      <div className="bg-white p-3 rounded-2xl border border-gray-300 w-full space-y-6">
         <div className="flex flex-col sm:flex-row justify-between px-4 items-start sm:items-center gap-3">
           <div className="flex items-center gap-2">
             <LayoutGrid className="text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-800">Mesas</h1>
+            <h1 className="text-2xl font-bold text-blue-700">Mesas</h1>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <input
@@ -206,7 +247,7 @@ const DashboardTable = () => {
                     >
                       <div>
                         <h2 className="font-semibold text-gray-800">Mesa {table.number}</h2>
-                        <p className="text-sm text-gray-500">{table.user.length} cliente(s)</p>
+                        <p className="text-sm text-gray-500">{table.user?.length || 0} cliente(s)</p>
                       </div>
                       {hasOrders && (expandedTable === table.id ? <ChevronUp className="text-gray-600" /> : <ChevronDown className="text-gray-600" />)}
 
@@ -217,7 +258,10 @@ const DashboardTable = () => {
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>
-                      <button className="text-blue-600 hover:text-blue-800">
+                      <button
+                        className="text-blue-600 hover:text-blue-800"
+                        onClick={() => handleCleanTable(table.id)}
+                      >
                         <Paintbrush className="w-5 h-5" />
                       </button>
                     </div>

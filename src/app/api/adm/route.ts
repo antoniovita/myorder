@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma"; 
+import authenticate from "@/middlewares/authMiddleware";
 
 export const DELETE = async (req: NextRequest) => {
     try {
+
+        const auth = await authenticate(req);
+                
+        if (!auth || typeof auth !== 'object' || !('id' in auth)) {
+            return NextResponse.json({ message: "Usuário não autenticado." }, { status: 401 });
+        }
+                
         const body = await req.json();
 
         const { tableId } = body;
@@ -28,6 +36,13 @@ export const DELETE = async (req: NextRequest) => {
 
 export const PUT = async (req: NextRequest) => {
     try {
+
+        const auth = await authenticate(req);
+                
+        if (!auth || typeof auth !== 'object' || !('id' in auth)) {
+            return NextResponse.json({ message: "Usuário não autenticado." }, { status: 401 });
+        }
+        
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id");
 

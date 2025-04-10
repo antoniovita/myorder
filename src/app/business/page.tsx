@@ -1,9 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import CreateItem from '@/components/createItem';
-import CreateTable from '@/components/createTable';
-import { Users, Table as TableIcon, ShoppingCart, Trash2, BadgeCheck, Clock, DollarSign } from 'lucide-react';
-import ChangeInfo from '@/components/changeInfo';
+import { Users, Table as TableIcon, ShoppingCart, Trash2, Clock, DollarSign, User } from 'lucide-react';
 
 const BusinessPage = () => {
     interface Table {
@@ -45,7 +42,7 @@ const BusinessPage = () => {
 
     const [clients, setClients] = useState<(User & { order: Order, table: Table })[]>([]);
     const [tables, setTables] = useState<Table[]>([]);
-    const [orders, setOrders] = useState<(Order & {orderItem: OrderItem}) []>([]);
+    const [orders, setOrders] = useState<(Order & { orderItem: OrderItem })[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [providerId, setProviderId] = useState<string | null>(null);
@@ -115,139 +112,118 @@ const BusinessPage = () => {
         fetchData();
     }, [providerId, token]);
 
-    const handleTableCreated = (newTable: Table) => {
-        setTables((prev) => [...prev, newTable]);
-    };
-
-    const handleDeleteTable = async (tableId: string) => {
-        try {
-            const response = await fetch(`/api/table/?id=${tableId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Erro ao deletar mesa.');
-            }
-            setTables((prev) => prev.filter((table) => table.id !== tableId));
-        } catch (error) {
-            setError('Erro ao deletar mesa. Tente novamente.');
-        }
-    };
-
-    if (loading) return <div className="text-center mt-10 text-black">Carregando...</div>;
+    if (loading) return <div className="text-center mt-10 text-gray-700">Carregando...</div>;
     if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
     return (
-        <div className="min-h-screen bg-gray-100 p-6 text-black">
+        <div className="bg-gray-50 p-6 border border-gray-200 rounded-2xl w-full space-y-6">
             {!token && !loading ? (
                 <h1 className="text-center mt-10 text-red-500">
                     Você precisa estar logado para ver o painel do restaurante
                 </h1>
             ) : (
-                <>
-                    <div className="flex bg-gray-100 flex-col md:flex-row md:items-start gap-6 w-full">
-                        <section className="bg-white border border-gray-300 rounded-2xl p-6 w-full md:w-1/3">
-                            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                                <Users className="text-blue-600" /> Clientes
-                            </h2>
-                            <ul className="space-y-3">
-                                {clients.length > 0 ? (
-                                    clients.map((client) => (
-                                        <li key={client.id} className="p-3 border border-gray-200 rounded-2xl bg-gray-50 shadow-sm">
-                                            <div className="flex justify-between">
-                                                <span className="font-semibold">{client.name}</span>
-                                                <span className="text-sm text-gray-500">Mesa {client.table.number}</span>
-                                            </div>
-                                            <div className="flex justify-between text-sm text-gray-600 mt-1">
-                                                <p>Status do Pedido: <span className="font-medium">{client.order.status}</span></p>
-                                                <p>R$ {client.order.price}</p>
-                                            </div>
-                                        </li>
-                                    ))
-                                ) : (
-                                    <p className="text-sm text-gray-500">Nenhum cliente encontrado.</p>
-                                )}
-                            </ul>
-                        </section>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                        <section className="bg-white border border-gray-300 rounded-2xl p-6 w-full md:w-1/3">
-                            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                                <TableIcon className="text-green-600" /> Mesas
-                            </h2>
-                            <ul className="space-y-4">
-                                {tables.length > 0 ? (
-                                    tables.map((table) => {
-                                        const isExpanded = expandedTables.includes(table.id);
-                                        return (
-                                            <li key={table.id} className="p-3 border border-gray-200 rounded-2xl bg-gray-50 shadow-sm">
-                                                <div className="flex justify-between items-center">
-                                                    <div>
-                                                        <p><strong>Mesa:</strong> {table.number}</p>
-                                                        <p><strong>Clientes:</strong> {table.user.length}</p>
-                                                        <p><strong>Pedidos:</strong> {table.order.length}</p>
-                                                    </div>
-                                                    <div className="flex gap-2 items-center">
-                                                        <button
-                                                            onClick={() => toggleExpandTable(table.id)}
-                                                            className="text-sm text-blue-600 underline hover:text-blue-800"
-                                                        >
-                                                            {isExpanded ? 'Esconder clientes' : 'Ver clientes'}
-                                                        </button>
-                                                        <button onClick={() => handleDeleteTable(table.id)}>
-                                                            <Trash2 size={20} className="text-red-500 hover:text-red-700 transition" />
-                                                        </button>
-                                                    </div>
+                    <section className="bg-white border border-gray-200 rounded-2xl p-6">
+                        <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-600">
+                            <Users className="w-5 h-5" /> Clientes ({clients.length})
+                        </h2>
+                        <ul className="space-y-3">
+                            {clients.length > 0 ? (
+                                clients.map((client) => (
+                                    <li key={client.id} className="border rounded-2xl p-3 bg-white transition">
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex flex-row gap-3">
+                                                <div className="bg-blue-100 text-blue-600 p-2 rounded-full">
+                                                    <User className="w-5 h-5" />
                                                 </div>
-
-                                                {isExpanded && table.user.length > 0 && (
-                                                    <ul className="mt-4 space-y-2 bg-white p-2 rounded-xl border border-gray-300">
-                                                        {table.user.map((user) => (
-                                                            <li key={user.id} className="text-sm text-gray-700">
-                                                                <strong>Nome:</strong> {user.name}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                )}
-                                            </li>
-                                        );
-                                    })
-                                ) : (
-                                    <p className="text-sm text-gray-500">Nenhuma mesa encontrada.</p>
-                                )}
-                            </ul>
-                        </section>
-
-                        <section className="bg-white border border-gray-300 rounded-2xl p-6 w-full md:w-1/3">
-                            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                                <ShoppingCart className="text-purple-600" /> Pedidos
-                            </h2>
-                            <ul className="space-y-3">
-                                {orders.length > 0 ? (
-                                    orders.map((order) => (
-                                        <li key={order.id} className="border p-3 rounded-xl bg-gray-50 shadow-sm">
-                                            <div className="flex justify-between">
-                                                <span className="font-medium">Pedido #{order.id}</span>
-                                                <span className="text-sm text-gray-600">Mesa: {order.tableId}</span>
+                                                <h1 className='mt-2 text-xl'> {client.name}</h1>
                                             </div>
-                                            <div className="flex justify-between text-sm text-gray-600 mt-1">
-                                                <p>Status: {order.status}</p>
-                                                <p><DollarSign size={14} className="inline" /> R$ {order.price}</p>
-                                                <p><Clock size={14} className="inline" /> {new Date(order.date).toLocaleString()}</p>
+                                            <span className="text-sm text-gray-500">Mesa {client.table.number}</span>
+                                        </div>
+                                    </li>
+                                ))
+                            ) : (
+                                <p className="text-sm text-gray-400">Nenhum cliente encontrado.</p>
+                            )}
+                        </ul>
+                    </section>
+
+                    <section className="bg-white border border-gray-200 rounded-2xl p-6">
+                        <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-600">
+                            <TableIcon className="w-5 h-5" /> Mesas
+                        </h2>
+                        <ul className="space-y-3">
+                            {tables.length > 0 ? (
+                                tables.map((table) => {
+                                    const isExpanded = expandedTables.includes(table.id);
+                                    return (
+                                        <li
+                                            key={table.id}
+                                            onClick={() => toggleExpandTable(table.id)}
+                                            className="border rounded-xl p-4 bg-white cursor-pointer transition"
+                                        >
+                                            <div className="flex justify-between items-center">
+                                                <p className="font-semibold text-gray-800">Mesa {table.number}</p>
+                                                <span className="text-sm bg-gray-100 border border-gray-300 px-3 py-1 rounded-full text-gray-500">
+                                                    {table.user.length} cliente(s)
+                                                </span>
                                             </div>
+
+                                            {isExpanded && table.user.length > 0 && (
+                                                <ul className="mt-3 space-y-2">
+                                                    {table.user.map((user) => (
+                                                        <li
+                                                            key={user.id}
+                                                            className="flex items-center gap-2 p-2 rounded-2xl bg-white border text-gray-700"
+                                                        >
+                                                            <div className="bg-blue-100 text-blue-600 p-2 rounded-full">
+                                                                <User className="w-4 h-4" />
+                                                            </div>
+                                                            <span>{user.name}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
                                         </li>
-                                    ))
-                                ) : (
-                                    <p className="text-sm text-gray-500">Nenhum pedido encontrado.</p>
-                                )}
-                            </ul>
-                        </section>
-                    </div>
-                </>
+                                    );
+                                })
+                            ) : (
+                                <p className="text-sm text-gray-400">Nenhuma mesa encontrada.</p>
+                            )}
+                        </ul>
+                    </section>
+
+
+                    <section className="bg-white border border-gray-200 rounded-2xl p-6">
+                        <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-600">
+                            <ShoppingCart className="w-5 h-5" /> Pedidos
+                        </h2>
+                        <ul className="space-y-3">
+                            {orders.length > 0 ? (
+                                orders.map((order) => (
+                                    <li key={order.id} className="border rounded-xl p-4 bg-white hover:bg-gray-100 transition">
+                                        <div className="flex justify-between items-center text-sm font-medium text-gray-700">
+                                            <span># {order.id}</span>
+                                            <span className="text-gray-500">Mesa {order.tableId}</span>
+                                        </div>
+                                        <div className="flex justify-between mt-2 text-sm text-gray-600">
+                                            <span>Status: {order.status}</span>
+                                            <span className="flex items-center gap-1">
+                                                <DollarSign className="w-4 h-4" /> R$ {order.price}
+                                            </span>
+                                            <span className="flex items-center gap-1">
+                                                <Clock className="w-4 h-4" /> {new Date(order.date).toLocaleString()}
+                                            </span>
+                                        </div>
+                                    </li>
+                                ))
+                            ) : (
+                                <p className="text-sm text-gray-400">Nenhum pedido encontrado.</p>
+                            )}
+                        </ul>
+                    </section>
+                </div>
             )}
         </div>
     );
