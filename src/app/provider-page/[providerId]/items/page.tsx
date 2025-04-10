@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
-import { ShoppingCart, Home, LayoutDashboard } from "lucide-react";
+import { useCart } from '@/hooks/useCart' 
 
 interface Item {
   id: string;
@@ -16,6 +15,7 @@ interface Item {
 }
 
 export default function ItemsPage() {
+  const { addToCart } = useCart();
   const providerId = useParams()?.providerId as string;
   const [items, setItems] = useState<Item[]>([]);
 
@@ -60,11 +60,20 @@ export default function ItemsPage() {
                     <p className="text-sm text-gray-600 mt-1 mb-3">{item.description}</p>
                   </div>
                   <div className="flex items-center justify-between mt-auto">
-                    <p className="text-lg font-bold text-blue-600">R$ {item.price.toFixed(2)}</p>
+                  <p className="text-lg font-bold text-blue-600">R$ {item.price.toFixed(2)}</p>
+                  <div className="flex space-x-4">
                     <button className="text-sm text-blue-600 font-medium hover:underline">
                       Ver detalhes
                     </button>
+                    <button
+                      onClick={() => addToCart(item)}
+                      className="text-sm text-green-600 font-medium hover:underline"
+                    >
+                      Adicionar ao carrinho
+                    </button>
                   </div>
+                </div>
+
                 </div>
               </div>
             ))}

@@ -116,7 +116,7 @@ const ProfileForm = () => {
 
   return (
     <div className="w-full p-6 mt-5 bg-white border border-gray-200 rounded-2xl shadow-md space-y-6">
-      <h1 className="text-3xl font-bold">Meu Perfil</h1>
+      <h1 className="text-3xl font-bold">Meu Restaurante</h1>
 
       {error && (
         <div className="flex items-center gap-2 text-red-600">
@@ -153,7 +153,7 @@ const ProfileForm = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-3">
-            <Label htmlFor="owner">Dono</Label>
+            <Label htmlFor="owner">Responsável</Label>
             <Input id="owner" value={owner} onChange={(e) => setOwner(e.target.value)} disabled={loading} />
           </div>
 
