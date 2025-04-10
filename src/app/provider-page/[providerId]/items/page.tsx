@@ -15,7 +15,7 @@ interface Item {
 }
 
 export default function ItemsPage() {
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
   const providerId = useParams()?.providerId as string;
   const [items, setItems] = useState<Item[]>([]);
 
@@ -34,10 +34,12 @@ export default function ItemsPage() {
     fetchItems();
   }, [providerId]);
 
+  useEffect(() => {
+    console.log("Itens no carrinho:", cartItems);
+  }, [cartItems]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 py-12 px-6">
-      
-      {/* Products Grid */}
       <div className="max-w-6xl mx-auto">
         {items.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -60,20 +62,22 @@ export default function ItemsPage() {
                     <p className="text-sm text-gray-600 mt-1 mb-3">{item.description}</p>
                   </div>
                   <div className="flex items-center justify-between mt-auto">
-                  <p className="text-lg font-bold text-blue-600">R$ {item.price.toFixed(2)}</p>
-                  <div className="flex space-x-4">
-                    <button className="text-sm text-blue-600 font-medium hover:underline">
-                      Ver detalhes
-                    </button>
-                    <button
-                      onClick={() => addToCart(item)}
-                      className="text-sm text-green-600 font-medium hover:underline"
-                    >
-                      Adicionar ao carrinho
-                    </button>
+                    <p className="text-lg font-bold text-blue-600">R$ {item.price.toFixed(2)}</p>
+                    <div className="flex space-x-4">
+                      <button className="text-sm text-blue-600 font-medium hover:underline">
+                        Ver detalhes
+                      </button>
+                      <button
+                        onClick={() => {
+                          addToCart(item);
+                          console.log('Item adicionado:', item);
+                        }}
+                        className="text-sm text-green-600 font-medium hover:underline"
+                      >
+                        Adicionar ao carrinho
+                      </button>
+                    </div>
                   </div>
-                </div>
-
                 </div>
               </div>
             ))}

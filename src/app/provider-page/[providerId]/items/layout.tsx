@@ -3,14 +3,14 @@
 import { LayoutDashboard, ShoppingCart, Utensils, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
-import { CartProvider } from '@/context/CartContext'; // importa o provider
+import { CartProvider } from '@/context/CartContext';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const params = useParams();
   const providerId = typeof params?.providerId === 'string' ? params.providerId : null;
 
   return (
-    <CartProvider> {/* <- envolve aqui */}
+    <CartProvider> 
       <div className="flex flex-col min-h-screen">
         <Navbar providerId={providerId} />
         <main className="flex-1 p-6 bg-gradient-to-b from-white to-blue-50">
