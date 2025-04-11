@@ -89,7 +89,6 @@ const CartPage = () => {
             </div>
           ))}
 
-          {/* Total e botão para telas médias e grandes */}
           <div className="hidden sm:flex mt-10 border-t pt-5 items-center justify-between">
             <p className="text-xl font-semibold text-gray-900">
               Total: <span className="text-blue-600">R$ {total.toFixed(2)}</span>
@@ -101,7 +100,6 @@ const CartPage = () => {
         </div>
       )}
 
-      {/* Botão fixo em telas pequenas */}
       {cartItems.length > 0 && (
         <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-4 py-4 flex items-center justify-between shadow-md">
           <p className="text-lg font-semibold text-gray-900">
