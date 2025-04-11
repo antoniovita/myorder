@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { useCart } from '@/hooks/useCart' 
+import { useCart } from '@/hooks/useCart';
+import { Minus, Plus } from "lucide-react";
 
 interface Item {
   id: string;
@@ -18,6 +19,7 @@ export default function ItemsPage() {
   const { addToCart, cartItems } = useCart();
   const providerId = useParams()?.providerId as string;
   const [items, setItems] = useState<Item[]>([]);
+  const [quantities, setQuantities] = useState<{ [itemId: string]: number }>({});
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -26,6 +28,12 @@ export default function ItemsPage() {
         if (!response.ok) throw new Error("A requisição falhou.");
         const data = await response.json();
         setItems(data);
+
+        const initialQuantities: { [itemId: string]: number } = {};
+        data.forEach((item: Item) => {
+          initialQuantities[item.id] = 1;
+        });
+        setQuantities(initialQuantities);
       } catch (error) {
         console.error("Erro no fetch dos produtos.", error);
       }
@@ -34,9 +42,12 @@ export default function ItemsPage() {
     fetchItems();
   }, [providerId]);
 
-  useEffect(() => {
-    console.log("Itens no carrinho:", cartItems);
-  }, [cartItems]);
+  const handleQuantityChange = (itemId: string, delta: number) => {
+    setQuantities((prev) => {
+      const newQty = Math.max(1, (prev[itemId] || 1) + delta);
+      return { ...prev, [itemId]: newQty };
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 py-12 px-6">
@@ -62,19 +73,35 @@ export default function ItemsPage() {
                     <p className="text-sm text-gray-600 mt-1 mb-3">{item.description}</p>
                   </div>
                   <div className="flex items-center justify-between mt-auto">
-                    <p className="text-lg font-bold text-blue-600">R$ {item.price.toFixed(2)}</p>
+                    <p className="text-xl font-bold text-black">R$ {item.price.toFixed(2)}</p>
                     <div className="flex space-x-4">
-                      <button className="text-sm text-blue-600 font-medium hover:underline">
-                        Ver detalhes
-                      </button>
+                      <div className="flex items-center border rounded-xl overflow-hidden">
+                        <button
+                          className="px-3 py-1 text-lg font-bold text-gray-700 transition"
+                          onClick={() => handleQuantityChange(item.id, -1)}
+                        >
+                          <Minus size={14} />
+                        </button>
+                        <span className="px-4 py-1 text-md font-medium text-gray-800 bg-white">
+                          {quantities[item.id] || 1}
+                        </span>
+                        <button
+                          className="px-3 py-1 text-lg font-bold text-gray-700 transition"
+                          onClick={() => handleQuantityChange(item.id, 1)}
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
                       <button
                         onClick={() => {
-                          addToCart(item);
-                          console.log('Item adicionado:', item);
+                          for (let i = 0; i < (quantities[item.id] || 1); i++) {
+                            addToCart(item);
+                          }
+                          console.log('Item adicionado:', item, 'quantidade:', quantities[item.id]);
                         }}
-                        className="text-sm text-green-600 font-medium hover:underline"
+                        className="text-sm bg-green-600 py-3 text-white px-4 rounded-xl font-medium hover:underline"
                       >
-                        Adicionar ao carrinho
+                        Adicionar
                       </button>
                     </div>
                   </div>

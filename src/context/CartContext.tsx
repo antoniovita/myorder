@@ -22,19 +22,28 @@ export const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<Item[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false); // 🚨 trava para garantir que só monte quando o localStorage carregar
 
+  // Carrega o carrinho do localStorage apenas no client
   useEffect(() => {
-    const storedCart = localStorage.getItem('cart');
-    if (storedCart) {
-      setCartItems(JSON.parse(storedCart));
-      console.log('[INIT] Carrinho carregado do localStorage:', JSON.parse(storedCart));
+    if (typeof window !== 'undefined') {
+      const storedCart = localStorage.getItem('cart');
+      if (storedCart) {
+        const parsed = JSON.parse(storedCart);
+        setCartItems(parsed);
+        console.log('[INIT] Carrinho carregado:', parsed);
+      }
+      setIsInitialized(true);
     }
   }, []);
 
+  // Salva no localStorage toda vez que o carrinho mudar
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-    console.log('[SYNC] Carrinho salvo no localStorage:', cartItems);
-  }, [cartItems]);
+    if (isInitialized) {
+      localStorage.setItem('cart', JSON.stringify(cartItems));
+      console.log('[SYNC] Carrinho salvo:', cartItems);
+    }
+  }, [cartItems, isInitialized]);
 
   const addToCart = (item: Item) => {
     setCartItems(prevItems => {
@@ -47,33 +56,30 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       } else {
         updatedCart = [...prevItems, { ...item, quantity: 1 }];
       }
-      console.log('[ADD TO CART] Carrinho atualizado:', updatedCart);
+      console.log('[ADD TO CART] Novo estado:', updatedCart);
       return updatedCart;
     });
   };
 
   const updateCartQuantity = (itemId: string, quantity: number) => {
-    setCartItems(prevItems => {
-      const updatedCart = prevItems.map(item =>
+    setCartItems(prevItems =>
+      prevItems.map(item =>
         item.id === itemId ? { ...item, quantity } : item
-      );
-      console.log('[UPDATE QUANTITY] Carrinho atualizado:', updatedCart);
-      return updatedCart;
-    });
+      )
+    );
   };
 
   const removeFromCart = (itemId: string) => {
-    setCartItems(prevItems => {
-      const updatedCart = prevItems.filter(item => item.id !== itemId);
-      console.log('[REMOVE ITEM] Carrinho atualizado:', updatedCart);
-      return updatedCart;
-    });
+    setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
   };
 
   const clearCart = () => {
-    console.log('[CLEAR CART] Carrinho limpo');
     setCartItems([]);
   };
+
+  if (!isInitialized) {
+    return null;
+  }
 
   return (
     <CartContext.Provider
