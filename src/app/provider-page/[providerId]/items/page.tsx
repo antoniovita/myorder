@@ -20,6 +20,7 @@ export default function ItemsPage() {
   const providerId = useParams()?.providerId as string;
   const [items, setItems] = useState<Item[]>([]);
   const [quantities, setQuantities] = useState<{ [itemId: string]: number }>({});
+  const [addedProductId, setAddedProductId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -49,6 +50,19 @@ export default function ItemsPage() {
     });
   };
 
+  const handleAddToCart = (item: Item) => {
+    const quantity = quantities[item.id] || 1;
+    for (let i = 0; i < quantity; i++) {
+      addToCart(item);
+    }
+    setAddedProductId(item.id);
+    console.log('Item adicionado:', item, 'quantidade:', quantity);
+
+    setTimeout(() => {
+      setAddedProductId(null);
+    }, 2000);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 py-12 px-6">
       <div className="max-w-6xl mx-auto">
@@ -75,33 +89,28 @@ export default function ItemsPage() {
                   <div className="flex items-center justify-between mt-auto">
                     <p className="text-xl font-bold text-black">R$ {item.price.toFixed(2)}</p>
                     <div className="flex space-x-4">
-                      <div className="flex items-center border rounded-xl overflow-hidden">
+                      <div className="flex items-center border rounded-2xl overflow-hidden">
                         <button
-                          className="px-3 py-1 text-lg font-bold text-gray-700 transition"
+                          className="px-2 py-1 text-sm font-bold text-gray-700 items-center transition"
                           onClick={() => handleQuantityChange(item.id, -1)}
                         >
                           <Minus size={14} />
                         </button>
-                        <span className="px-4 py-1 text-md font-medium text-gray-800 bg-white">
+                        <span className="px-4 py-1 text-sm font-medium text-gray-800 bg-white">
                           {quantities[item.id] || 1}
                         </span>
                         <button
-                          className="px-3 py-1 text-lg font-bold text-gray-700 transition"
+                          className="px-2 py-1 text-sm font-bold text-gray-700 items-center transition"
                           onClick={() => handleQuantityChange(item.id, 1)}
                         >
                           <Plus size={14} />
                         </button>
                       </div>
                       <button
-                        onClick={() => {
-                          for (let i = 0; i < (quantities[item.id] || 1); i++) {
-                            addToCart(item);
-                          }
-                          console.log('Item adicionado:', item, 'quantidade:', quantities[item.id]);
-                        }}
-                        className="text-sm bg-green-600 py-3 text-white px-4 rounded-xl font-medium hover:underline"
+                        onClick={() => handleAddToCart(item)}
+                        className={`text-sm ${addedProductId === item.id ? 'bg-blue-900' : 'bg-blue-500'} py-3 text-white px-4 rounded-xl font-medium transition`}
                       >
-                        Adicionar
+                        {addedProductId === item.id ? "Adicionado" : "Adicionar"}
                       </button>
                     </div>
                   </div>

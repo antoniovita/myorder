@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Users, User, ReceiptText } from "lucide-react";
+import Cookies from "js-cookie";
 
 const DashboardUser = () => {
   interface Table {
@@ -40,6 +41,19 @@ const DashboardUser = () => {
   const [error, setError] = useState("");
   const [providerId, setProviderId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+
+    const tokenCookie = Cookies.get('token');
+    const providerIdCookie = Cookies.get('id');
+    
+    if (!tokenCookie || !providerIdCookie) {
+      return (
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-lg font-bold text-red-600">
+            Você precisa estar logado.
+          </p>
+        </div>
+      );
+    }
 
   useEffect(() => {
     const fetchAuthData = async () => {

@@ -13,6 +13,7 @@ import {
   Check,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 interface Table {
   id: string;
@@ -55,6 +56,19 @@ const DashboardTable = () => {
   const [tableNumber, setTableNumber] = useState("");
   const [createError, setCreateError] = useState("");
   const [deletePopupId, setDeletePopupId] = useState<string | null>(null);
+
+    const tokenCookie = Cookies.get('token');
+    const providerIdCookie = Cookies.get('id');
+    
+    if (!tokenCookie || !providerIdCookie) {
+      return (
+        <div className="flex items-center justify-center h-screen">
+          <p className="text-lg font-bold text-red-600">
+            Você precisa estar logado.
+          </p>
+        </div>
+      );
+    }
 
   const toggleUsers = (id: string) => {
     setExpandedUsers((prev) =>

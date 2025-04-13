@@ -27,6 +27,10 @@ const CartPage = () => {
         0
       );
       console.log('Total do pedido:', total);
+
+      if(cartItems.length == 0){
+        return console.log('Não se pode criar order sem items.')
+      }
   
       const response = await fetch('/api/order', {
         method: 'POST',
@@ -75,7 +79,7 @@ const CartPage = () => {
         console.log(`Item do pedido ${item.id} criado com sucesso`);
       }
       
-  
+      
       console.log('Itens do pedido criados.');
       clearCart();
   
@@ -94,8 +98,6 @@ const CartPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pb-28 sm:pb-0">
-      <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-8">Seu Carrinho</h1>
-
       {cartItems.length === 0 ? (
         <p className="text-gray-500 text-center text-base sm:text-lg">O carrinho está vazio.</p>
       ) : (
