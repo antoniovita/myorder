@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 export interface Item {
   id: string;
@@ -22,9 +23,8 @@ export const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<Item[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false); // 🚨 trava para garantir que só monte quando o localStorage carregar
-
-  // Carrega o carrinho do localStorage apenas no client
+  const [isInitialized, setIsInitialized] = useState(false); 
+  
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedCart = localStorage.getItem('cart');
@@ -37,7 +37,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  // Salva no localStorage toda vez que o carrinho mudar
   useEffect(() => {
     if (isInitialized) {
       localStorage.setItem('cart', JSON.stringify(cartItems));
@@ -75,6 +74,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const clearCart = () => {
     setCartItems([]);
+    Cookies.remove('cart')
   };
 
   if (!isInitialized) {

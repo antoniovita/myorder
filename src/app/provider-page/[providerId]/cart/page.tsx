@@ -6,7 +6,7 @@ import { Minus, Plus, Trash2 } from 'lucide-react';
 import Cookies from 'js-cookie';
 
 const CartPage = () => {
-  const { cartItems, updateCartQuantity, removeFromCart } = useCart();
+  const { cartItems, updateCartQuantity, removeFromCart, clearCart} = useCart();
 
   const handleQuantityChange = (itemId: string, delta: number) => {
     const currentItem = cartItems.find(item => item.id === itemId);
@@ -47,28 +47,34 @@ const CartPage = () => {
         throw new Error('Erro ao criar pedido');
       }
   
-      const order = await response.json();
+      const data = await response.json();
+      const order = data.order
       console.log('Pedido criado:', order);
+      console.log(order.id)
   
       for (const item of cartItems) {
-        console.log(`Criando item do pedido: ${item.id}`);
+        const orderItemPayload = {
+          itemId: item.id,
+          quantity: item.quantity || 1,
+          orderId: order.id,
+          observation: item.observation || '',
+        };
+      
+        console.log(`Enviando item do pedido para API /api/orderItem:`, orderItemPayload);
+      
         const itemResponse = await fetch('/api/orderItem', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            itemId: item.id,
-            quantity: item.quantity || 1,
-            orderId: order.id,
-            observation: item.observation || '',
-          }),
+          body: JSON.stringify(orderItemPayload),
         });
-  
+      
         if (!itemResponse.ok) {
           throw new Error(`Erro ao criar item do pedido: ${item.id}`);
         }
-  
+      
         console.log(`Item do pedido ${item.id} criado com sucesso`);
       }
+      
   
       console.log('Itens do pedido criados.');
       clearCart();
@@ -85,10 +91,6 @@ const CartPage = () => {
     0
   );
 
-
-  const clearCart = () => {
-    console.log('Carrinho limpo');
-  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pb-28 sm:pb-0">

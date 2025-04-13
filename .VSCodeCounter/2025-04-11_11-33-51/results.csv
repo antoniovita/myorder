@@ -1,0 +1,73 @@
+"filename", "language", "TypeScript", "JSON", "JSON with Comments", "Markdown", "TypeScript JSX", "XML", "Prisma", "CSS", "JavaScript", "MS SQL", "comment", "blank", "total"
+"/home/antonio/dev/myorder/README.md", "Markdown", 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 9, 25
+"/home/antonio/dev/myorder/components.json", "JSON", 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21
+"/home/antonio/dev/myorder/eslint.config.mjs", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 5, 17
+"/home/antonio/dev/myorder/next.config.ts", "TypeScript", 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 10
+"/home/antonio/dev/myorder/package-lock.json", "JSON", 0, 7150, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7151
+"/home/antonio/dev/myorder/package.json", "JSON", 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 46
+"/home/antonio/dev/myorder/postcss.config.mjs", "JavaScript", 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 2, 6
+"/home/antonio/dev/myorder/prisma/migrations/20250402175726_first_migration/migration.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 61, 18, 25, 104
+"/home/antonio/dev/myorder/prisma/migrations/20250402183538_second_migration/migration.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 9, 3, 15
+"/home/antonio/dev/myorder/prisma/migrations/20250404220333_third/migration.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 11, 4, 20
+"/home/antonio/dev/myorder/prisma/migrations/20250405162552_item_category_not_mandatory/migration.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 3
+"/home/antonio/dev/myorder/prisma/migrations/20250409182759_migration_new_tables/migration.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8, 1, 11
+"/home/antonio/dev/myorder/prisma/migrations/20250409183753_new_migration/migration.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 3
+"/home/antonio/dev/myorder/prisma/migrations/20250409184001_new_mig/migration.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 9, 3, 16
+"/home/antonio/dev/myorder/prisma/migrations/20250409190355_new_mig/migration.sql", "MS SQL", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 1, 9
+"/home/antonio/dev/myorder/prisma/schema.prisma", "Prisma", 0, 0, 0, 0, 0, 0, 78, 0, 0, 0, 0, 13, 91
+"/home/antonio/dev/myorder/public/file.svg", "XML", 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+"/home/antonio/dev/myorder/public/globe.svg", "XML", 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+"/home/antonio/dev/myorder/public/next.svg", "XML", 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+"/home/antonio/dev/myorder/public/vercel.svg", "XML", 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+"/home/antonio/dev/myorder/public/window.svg", "XML", 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1
+"/home/antonio/dev/myorder/src/app/account/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 80, 0, 0, 0, 0, 0, 0, 13, 93
+"/home/antonio/dev/myorder/src/app/api/adm/route.ts", "TypeScript", 54, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 74
+"/home/antonio/dev/myorder/src/app/api/item/route.ts", "TypeScript", 106, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 133
+"/home/antonio/dev/myorder/src/app/api/order/route.ts", "TypeScript", 83, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 20, 104
+"/home/antonio/dev/myorder/src/app/api/orderItem/route.ts", "TypeScript", 97, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27, 124
+"/home/antonio/dev/myorder/src/app/api/provider/route.ts", "TypeScript", 149, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 194
+"/home/antonio/dev/myorder/src/app/api/table/route.ts", "TypeScript", 121, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 153
+"/home/antonio/dev/myorder/src/app/api/token/route.ts", "TypeScript", 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 8
+"/home/antonio/dev/myorder/src/app/api/user/route.ts", "TypeScript", 96, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 119
+"/home/antonio/dev/myorder/src/app/business/item/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 198, 0, 0, 0, 0, 0, 0, 19, 217
+"/home/antonio/dev/myorder/src/app/business/layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 19, 0, 0, 0, 0, 0, 0, 3, 22
+"/home/antonio/dev/myorder/src/app/business/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 209, 0, 0, 0, 0, 0, 0, 24, 233
+"/home/antonio/dev/myorder/src/app/business/table/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 304, 0, 0, 0, 0, 0, 0, 30, 334
+"/home/antonio/dev/myorder/src/app/business/user/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 152, 0, 0, 0, 0, 0, 0, 18, 170
+"/home/antonio/dev/myorder/src/app/globals.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 115, 0, 0, 0, 5, 120
+"/home/antonio/dev/myorder/src/app/layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 0, 4, 30
+"/home/antonio/dev/myorder/src/app/login/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 164, 0, 0, 0, 0, 0, 0, 8, 172
+"/home/antonio/dev/myorder/src/app/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0, 7, 55
+"/home/antonio/dev/myorder/src/app/provider-page/[providerId]/cart/layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 8, 71
+"/home/antonio/dev/myorder/src/app/provider-page/[providerId]/cart/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 102, 0, 0, 0, 0, 0, 2, 16, 120
+"/home/antonio/dev/myorder/src/app/provider-page/[providerId]/items/layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 8, 71
+"/home/antonio/dev/myorder/src/app/provider-page/[providerId]/items/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 9, 119
+"/home/antonio/dev/myorder/src/app/provider-page/[providerId]/order/layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 63, 0, 0, 0, 0, 0, 0, 8, 71
+"/home/antonio/dev/myorder/src/app/provider-page/[providerId]/order/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"/home/antonio/dev/myorder/src/app/provider-page/[providerId]/page.tsx", "TypeScript JSX", 0, 0, 0, 0, 98, 0, 0, 0, 0, 0, 0, 19, 117
+"/home/antonio/dev/myorder/src/components/ChangePassword.tsx", "TypeScript JSX", 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 1, 2, 12
+"/home/antonio/dev/myorder/src/components/DashNavBar.tsx", "TypeScript JSX", 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, 0, 6, 48
+"/home/antonio/dev/myorder/src/components/LayoutWrapper.tsx", "TypeScript JSX", 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 6, 23
+"/home/antonio/dev/myorder/src/components/PaymentInfo.tsx", "TypeScript JSX", 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 1, 2, 12
+"/home/antonio/dev/myorder/src/components/ProfileForm.tsx", "TypeScript JSX", 0, 0, 0, 0, 175, 0, 0, 0, 0, 0, 1, 28, 204
+"/home/antonio/dev/myorder/src/components/aboutUs.tsx", "TypeScript JSX", 0, 0, 0, 0, 31, 0, 0, 0, 0, 0, 0, 6, 37
+"/home/antonio/dev/myorder/src/components/business.tsx", "TypeScript JSX", 0, 0, 0, 0, 39, 0, 0, 0, 0, 0, 0, 7, 46
+"/home/antonio/dev/myorder/src/components/changeInfo.tsx", "TypeScript JSX", 0, 0, 0, 0, 169, 0, 0, 0, 0, 0, 0, 22, 191
+"/home/antonio/dev/myorder/src/components/createItem.tsx", "TypeScript JSX", 0, 0, 0, 0, 176, 0, 0, 0, 0, 0, 0, 25, 201
+"/home/antonio/dev/myorder/src/components/createTable.tsx", "TypeScript JSX", 0, 0, 0, 0, 114, 0, 0, 0, 0, 0, 0, 18, 132
+"/home/antonio/dev/myorder/src/components/homeAdvantage.tsx", "TypeScript JSX", 0, 0, 0, 0, 35, 0, 0, 0, 0, 0, 0, 8, 43
+"/home/antonio/dev/myorder/src/components/homePresent.tsx", "TypeScript JSX", 0, 0, 0, 0, 42, 0, 0, 0, 0, 0, 0, 5, 47
+"/home/antonio/dev/myorder/src/components/navBar.tsx", "TypeScript JSX", 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 13, 123
+"/home/antonio/dev/myorder/src/components/ui/button.tsx", "TypeScript JSX", 0, 0, 0, 0, 54, 0, 0, 0, 0, 0, 0, 6, 60
+"/home/antonio/dev/myorder/src/components/ui/dialog.tsx", "TypeScript JSX", 0, 0, 0, 0, 122, 0, 0, 0, 0, 0, 0, 14, 136
+"/home/antonio/dev/myorder/src/components/ui/input.tsx", "TypeScript JSX", 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 4, 22
+"/home/antonio/dev/myorder/src/components/ui/label.tsx", "TypeScript JSX", 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 5, 25
+"/home/antonio/dev/myorder/src/components/ui/textarea.tsx", "TypeScript JSX", 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 4, 19
+"/home/antonio/dev/myorder/src/context/CartContext.tsx", "TypeScript JSX", 0, 0, 0, 0, 82, 0, 0, 0, 0, 0, 2, 14, 98
+"/home/antonio/dev/myorder/src/hooks/useCart.ts", "TypeScript", 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 11
+"/home/antonio/dev/myorder/src/lib/prisma.ts", "TypeScript", 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 10
+"/home/antonio/dev/myorder/src/lib/supabase.ts", "TypeScript", 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 7
+"/home/antonio/dev/myorder/src/lib/utils.ts", "TypeScript", 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 7
+"/home/antonio/dev/myorder/src/middlewares/authMiddleware.ts", "TypeScript", 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 29
+"/home/antonio/dev/myorder/tsconfig.json", "JSON with Comments", 0, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 1, 28
+"Total", "-", 764, 7216, 27, 16, 2978, 5, 78, 115, 16, 78, 72, 684, 12049
