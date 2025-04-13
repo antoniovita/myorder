@@ -27,26 +27,37 @@ const ProviderWelcomePage = () => {
     const handleSubmit = async () => {
         setLoading(true);
         setError("");
-
+    
         const payload = {
             name,
             tableNumber: Number(tableNumber),
             providerId,
         };
-
+    
         try {
             const res = await fetch("/api/user", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
-
+    
             if (!res.ok) throw new Error("Erro ao criar usuário.");
-
+    
             const data = await res.json();
-            Cookies.set("userId", data.id);
-            Cookies.set("tableId", data.tableId);
-            
+            const user = data.user;
+    
+            console.log(user);
+    
+            Cookies.remove("userId");
+            Cookies.remove("tableId");
+            Cookies.remove("providerId");
+            Cookies.remove("name");
+    
+            Cookies.set("userId", user.id, { expires: 7, path: '' });
+            Cookies.set("tableId", user.tableId, { expires: 7, path: '' });
+            Cookies.set("providerId", providerId, { expires: 7, path: '' });
+            Cookies.set("name", name, { expires: 7, path: '' });
+    
             router.push(`/provider-page/${providerId}/items`);
         } catch (err) {
             setError("Falha ao criar usuário. Tente novamente.");

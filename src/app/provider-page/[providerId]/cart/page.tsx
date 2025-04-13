@@ -22,6 +22,12 @@ const CartPage = () => {
 
   const createOrder = async () => {
     try {
+      const total = cartItems.reduce(
+        (acc, item) => acc + item.price * (item.quantity ?? 1),
+        0
+      );
+      console.log('Total do pedido:', total);
+  
       const response = await fetch('/api/order', {
         method: 'POST',
         headers: {
@@ -45,6 +51,7 @@ const CartPage = () => {
       console.log('Pedido criado:', order);
   
       for (const item of cartItems) {
+        console.log(`Criando item do pedido: ${item.id}`);
         const itemResponse = await fetch('/api/orderItem', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -59,19 +66,29 @@ const CartPage = () => {
         if (!itemResponse.ok) {
           throw new Error(`Erro ao criar item do pedido: ${item.id}`);
         }
+  
+        console.log(`Item do pedido ${item.id} criado com sucesso`);
       }
   
       console.log('Itens do pedido criados.');
-      alert('Pedido realizado com sucesso!');
-      
+      clearCart();
+  
     } catch (error) {
-      console.error(error);
+      console.error('Erro na criação do pedido:', error);
       alert('Erro ao criar pedido');
     }
   };
   
 
-  const total = cartItems.reduce((acc, item) => acc + item.price * (item.quantity ?? 1), 0);
+  const total = cartItems.reduce(
+    (acc, item) => acc + item.price * (item.quantity ?? 1),
+    0
+  );
+
+
+  const clearCart = () => {
+    console.log('Carrinho limpo');
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pb-28 sm:pb-0">
@@ -145,7 +162,10 @@ const CartPage = () => {
             <p className="text-xl font-semibold text-gray-900">
               Total: <span className="text-blue-600">R$ {total.toFixed(2)}</span>
             </p>
-            <button className="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-3 rounded-lg font-medium text-base">
+            <button
+              onClick={createOrder}
+              className="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-3 rounded-lg font-medium text-base"
+            >
               Finalizar Pedido
             </button>
           </div>
@@ -157,7 +177,10 @@ const CartPage = () => {
           <p className="text-lg font-semibold text-gray-900">
             Total: <span className="text-blue-600">R$ {total.toFixed(2)}</span>
           </p>
-          <button className="bg-blue-600 hover:bg-blue-700 transition text-white px-5 py-2.5 rounded-lg font-medium text-sm">
+          <button
+            onClick={createOrder}
+            className="bg-blue-600 hover:bg-blue-700 transition text-white px-5 py-2.5 rounded-lg font-medium text-sm"
+          >
             Finalizar
           </button>
         </div>

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import authenticate from "@/middlewares/authMiddleware";
 import { prisma } from "../../../lib/prisma";
 
 const GET = async (req: NextRequest) => {
@@ -33,11 +32,15 @@ const POST = async (req: NextRequest) => {
         }
 
         const orderExists = await prisma.order.findUnique({ where: { id: orderId } });
+        console.log('Pedido encontrado:', orderExists);
+
         if (!orderExists) {
             return NextResponse.json({ message: "Pedido não encontrado." }, { status: 404 });
         }
 
         const itemExists = await prisma.item.findUnique({ where: { id: itemId } });
+        console.log('Item encontrado:', itemExists);
+
         if (!itemExists) {
             return NextResponse.json({ message: "Item não encontrado." }, { status: 404 });
         }
@@ -45,27 +48,32 @@ const POST = async (req: NextRequest) => {
         const existingOrderItem = await prisma.orderItem.findFirst({
             where: { orderId, itemId },
         });
+        console.log('Item já existente no pedido:', existingOrderItem);
 
         let orderItem;
         if (existingOrderItem) {
+            console.log('Atualizando item existente...');
             orderItem = await prisma.orderItem.update({
                 where: { id: existingOrderItem.id },
                 data: { quantity: existingOrderItem.quantity + quantity },
             });
-    
         } else {
+            console.log('Criando novo item no pedido...');
             orderItem = await prisma.orderItem.create({
                 data: { orderId, itemId, quantity, observation },
             });
         }
 
+        console.log('Item do pedido processado:', orderItem);
+
         return NextResponse.json({ message: "Item adicionado ao pedido com sucesso!", orderItem }, { status: 201 });
 
     } catch (error) {
-        console.error(error);
+        console.error('Erro ao adicionar item ao pedido:', error);
         return NextResponse.json({ message: "Erro ao adicionar item ao pedido." }, { status: 500 });
     }
 };
+
 
 const DELETE = async (req: NextRequest) => {
     try {
