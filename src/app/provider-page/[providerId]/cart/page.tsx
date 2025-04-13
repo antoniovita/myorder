@@ -61,7 +61,7 @@ const CartPage = () => {
         }
       }
   
-      console.log('Itens do pedido criados com sucesso');
+      console.log('Itens do pedido criados.');
       alert('Pedido realizado com sucesso!');
       
     } catch (error) {
