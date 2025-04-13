@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html>
-      <body className={`${poppins.variable} antialiased`}>
+    <html lang="en" className={poppins.variable}>
+      <body className="antialiased bg-gray-50 text-black">
         <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>

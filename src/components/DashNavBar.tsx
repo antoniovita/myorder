@@ -11,7 +11,7 @@ export default function DashNavBar() {
 
   const navItems = [
     { label: 'Dashboard', href: '/business', icon: House },
-    { label: 'Usuários', href: '/business/user', icon: Users },
+    { label: 'Usuarios', href: '/business/user', icon: Users },
     { label: 'Pedidos', href: '/business/order', icon: ShoppingCart },
     { label: 'Mesas', href: '/business/table', icon: Table },
     { label: 'Itens', href: '/business/item', icon: Utensils },
@@ -25,7 +25,7 @@ export default function DashNavBar() {
               const isActive = current === href.split('/').pop()
 
             return (
-              <div>
+              <div key={label}>
                 <Link
                   key={label}
                   href={href}

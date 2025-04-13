@@ -11,9 +11,9 @@ import {
   Paintbrush,
   X,
   Check,
+  Search,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 
 interface Table {
   id: string;
@@ -46,6 +46,7 @@ interface Order {
 
 const DashboardTable = () => {
   const [tables, setTables] = useState<Table[]>([]);
+  const [filteredTables, setFilteredTables] = useState<Table[]>([]);
   const [expandedTable, setExpandedTable] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -56,19 +57,7 @@ const DashboardTable = () => {
   const [tableNumber, setTableNumber] = useState("");
   const [createError, setCreateError] = useState("");
   const [deletePopupId, setDeletePopupId] = useState<string | null>(null);
-
-    const tokenCookie = Cookies.get('token');
-    const providerIdCookie = Cookies.get('id');
-    
-    if (!tokenCookie || !providerIdCookie) {
-      return (
-        <div className="flex items-center justify-center h-screen">
-          <p className="text-lg font-bold text-red-600">
-            Você precisa estar logado.
-          </p>
-        </div>
-      );
-    }
+  const [searchQuery, setSearchQuery] = useState("");
 
   const toggleUsers = (id: string) => {
     setExpandedUsers((prev) =>
@@ -100,7 +89,6 @@ const DashboardTable = () => {
       });
       if (!res.ok) throw new Error("Erro ao carregar mesas.");
       const data = await res.json();
-
       setTables(data.sort((a: Table, b: Table) => a.number - b.number));
     } catch (err) {
       setError("Erro ao buscar mesas. Verifique a conexão.");
@@ -108,7 +96,18 @@ const DashboardTable = () => {
       setLoading(false);
     }
   };
-  
+
+  const filterTables = (query: string) => {
+    if (!query) {
+      setFilteredTables(tables);
+    } else {
+      setFilteredTables(
+        tables.filter((table) =>
+          table.number.toString().includes(query)
+        )
+      );
+    }
+  };
 
   const handleCreateTable = async () => {
     if (!tableNumber) {
@@ -152,7 +151,7 @@ const DashboardTable = () => {
       setCreateError("Credenciais inválidas.");
       return;
     }
-  
+
     setCreating(true);
     setCreateError("");
     try {
@@ -166,7 +165,7 @@ const DashboardTable = () => {
           tableId,
         })
       });
-  
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(errorData.message || "Erro ao limpar mesa.");
@@ -183,8 +182,6 @@ const DashboardTable = () => {
       setCreating(false);
     }
   };
-  
-
 
   const handleDeleteTable = async (tableId: string) => {
     if (!token) return;
@@ -214,21 +211,43 @@ const DashboardTable = () => {
     fetchTables();
   }, [providerId, token]);
 
+  useEffect(() => {
+    filterTables(searchQuery);
+  }, [searchQuery, tables]);
+
   if (loading) return <div className="text-center mt-10 text-black">Carregando...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
-  return (
+  return !token || !providerId ? (
+    <div className="flex items-center justify-center h-screen">
+      <p className="text-lg font-bold text-red-600">
+        Você precisa estar logado.
+      </p>
+    </div>
+  ) : (
     <div className="min-h-screen bg-gray-100 p-4 flex justify-center items-start">
-      <div className="bg-white p-3 rounded-2xl border border-gray-300 w-full space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between px-4 items-start sm:items-center gap-3">
+      <div className="bg-white p-3 rounded-2xl border border-gray-300 w-full space-y-6 shadow-lg">
+        <div className="flex flex-col sm:flex-row justify-between px-4 items-start sm:items-center gap-3 mb-4">
           <div className="flex items-center gap-2">
             <LayoutGrid className="text-blue-600" />
             <h1 className="text-2xl font-bold text-blue-700">Mesas</h1>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+
+            <div className="relative w-full sm:w-auto">
+              <input
+                type="number"
+                className="rounded-2xl border px-3 py-2 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full pl-10"
+                placeholder="Pesquisar número da mesa"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
+            </div>
+
             <input
               type="number"
-              className="rounded-lg border px-3 py-2 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
+              className="rounded-2xl border px-3 py-2 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
               placeholder="Número da mesa"
               value={tableNumber}
               onChange={(e) => setTableNumber(e.target.value)}
@@ -246,8 +265,8 @@ const DashboardTable = () => {
         {createError && <p className="text-red-500 px-4 text-sm">{createError}</p>}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {tables.length > 0 ? (
-            tables.map((table) => {
+          {filteredTables.length > 0 ? (
+            filteredTables.map((table) => {
               const hasOrders = table.order && table.order.length > 0;
               const latestOrder = hasOrders && table.order[table.order.length - 1];
               return (
@@ -266,19 +285,19 @@ const DashboardTable = () => {
                       {hasOrders && (expandedTable === table.id ? <ChevronUp className="text-gray-600" /> : <ChevronDown className="text-gray-600" />)}
 
                       <div className="flex gap-2 mt-4">
-                      <button
-                        className="text-red-600 hover:text-red-800"
-                        onClick={() => setDeletePopupId(table.id)}
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                      <button
-                        className="text-blue-600 hover:text-blue-800"
-                        onClick={() => handleCleanTable(table.id)}
-                      >
-                        <Paintbrush className="w-5 h-5" />
-                      </button>
-                    </div>
+                        <button
+                          className="text-red-600 hover:text-red-800"
+                          onClick={() => setDeletePopupId(table.id)}
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                        <button
+                          className="text-blue-600 hover:text-blue-800"
+                          onClick={() => handleCleanTable(table.id)}
+                        >
+                          <Paintbrush className="w-5 h-5" />
+                        </button>
+                      </div>
                     </div>
 
                     {hasOrders && expandedTable === table.id && (

@@ -25,6 +25,8 @@ const BusinessPage = () => {
         id: string;
         tableId: string;
         userId: string;
+        table: Table;
+        user: User;
         price: number;
         status: string;
         providerId: string;
@@ -204,8 +206,8 @@ const BusinessPage = () => {
                                 orders.map((order) => (
                                     <li key={order.id} className="border rounded-xl p-4 bg-white hover:bg-gray-100 transition">
                                         <div className="flex justify-between items-center text-sm font-medium text-gray-700">
-                                            <span># {order.id}</span>
-                                            <span className="text-gray-500">Mesa {order.tableId}</span>
+                                            <span>Cliente: {order.user.name}</span>
+                                            <span className="text-gray-500">Mesa {order.table.number}</span>
                                         </div>
                                         <div className="flex justify-between mt-2 text-sm text-gray-600">
                                             <span>Status: {order.status}</span>
@@ -213,7 +215,13 @@ const BusinessPage = () => {
                                                 <DollarSign className="w-4 h-4" /> R$ {order.price}
                                             </span>
                                             <span className="flex items-center gap-1">
-                                                <Clock className="w-4 h-4" /> {new Date(order.date).toLocaleString()}
+                                                <Clock className="w-4 h-4" /> {new Date(order.date).toLocaleString('pt-BR', {
+                                                day: '2-digit',
+                                                month: 'long',
+                                                year: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                                })}
                                             </span>
                                         </div>
                                     </li>

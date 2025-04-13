@@ -6,23 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import Cookies from 'js-cookie';
 
 const DashboardItem = () => {
-
-  const tokenCookie = Cookies.get('token');
-  const providerIdCookie = Cookies.get('id');
-  
-  if (!tokenCookie || !providerIdCookie) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-lg font-bold text-red-600">
-          Você precisa estar logado.
-        </p>
-      </div>
-    );
-  }
-
 
   interface Item {
     id: string;
@@ -131,7 +116,13 @@ const DashboardItem = () => {
     }
   };
 
-  return (
+  return !token || !providerId ? (
+    <div className="flex items-center justify-center h-screen">
+      <p className="text-lg font-bold text-red-600">
+        Você precisa estar logado.
+      </p>
+    </div>
+  ) : (
     <div className='bg-gray-100 flex w-full p-4 min-h-screen justify-center items-start'>
       <div className='bg-white p-4 rounded-2xl border border-gray-300 w-full space-y-6'>
         <div className='flex justify-between items-center'>
