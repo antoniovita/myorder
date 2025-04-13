@@ -56,7 +56,7 @@ export const GET = async (req: NextRequest) => {
                 table: true,
                 user: true,
                 provider: true,
-                orderItem: true,
+                orderItem: { include: { item: true}}
             },
         });
 
