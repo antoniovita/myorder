@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Cookies from "js-cookie";
 
 const ProviderWelcomePage = () => {
     const router = useRouter();
@@ -42,6 +43,10 @@ const ProviderWelcomePage = () => {
 
             if (!res.ok) throw new Error("Erro ao criar usuário.");
 
+            const data = await res.json();
+            Cookies.set("userId", data.id);
+            Cookies.set("tableId", data.tableId);
+            
             router.push(`/provider-page/${providerId}/items`);
         } catch (err) {
             setError("Falha ao criar usuário. Tente novamente.");

@@ -3,6 +3,7 @@
 import { useCart } from '@/hooks/useCart';
 import Image from 'next/image';
 import { Minus, Plus, Trash2 } from 'lucide-react';
+import Cookies from 'js-cookie';
 
 const CartPage = () => {
   const { cartItems, updateCartQuantity, removeFromCart } = useCart();
@@ -18,6 +19,57 @@ const CartPage = () => {
   const handleDeleteItem = (itemId: string) => {
     removeFromCart(itemId);
   };
+
+  const createOrder = async () => {
+    try {
+      const response = await fetch('/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          price: total,
+          tableId: Cookies.get('tableId'),
+          userId: Cookies.get('userId'),
+          providerId: Cookies.get('providerId'),
+          status: 'ativo',
+          date: new Date().toISOString(),
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Erro ao criar pedido');
+      }
+  
+      const order = await response.json();
+      console.log('Pedido criado:', order);
+  
+      for (const item of cartItems) {
+        const itemResponse = await fetch('/api/orderItem', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            itemId: item.id,
+            quantity: item.quantity || 1,
+            orderId: order.id,
+            observation: item.observation || '',
+          }),
+        });
+  
+        if (!itemResponse.ok) {
+          throw new Error(`Erro ao criar item do pedido: ${item.id}`);
+        }
+      }
+  
+      console.log('Itens do pedido criados com sucesso');
+      alert('Pedido realizado com sucesso!');
+      
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao criar pedido');
+    }
+  };
+  
 
   const total = cartItems.reduce((acc, item) => acc + item.price * (item.quantity ?? 1), 0);
 
