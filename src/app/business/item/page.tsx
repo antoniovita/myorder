@@ -43,6 +43,9 @@ const DashboardItem = () => {
   const [token, setToken] = useState<string | null>(null);
   const [providerId, setProviderId] = useState<string | null>(null);
   const [items, setItems] = useState<Item[]>([]);
+  const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
 
   // Buscar token e providerId ao carregar
   useEffect(() => {
@@ -161,6 +164,54 @@ const DashboardItem = () => {
       setMessage(`❌ ${error.message}`);
     }
   };
+
+  const openEditDialog = (item: Item) => {
+    setEditingItem(item);
+    setName(item.name);
+    setPrice(item.price.toString());
+    setCategory(item.category);
+    setDescription(item.description);
+    setImageUrl(item.imgUrl);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem || !token) return;
+  
+    try {
+      const res = await fetch(`/api/item?id=${editingItem.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name,
+          price: parseFloat(price),
+          description,
+          imgUrl: imageUrl,
+          category,
+          providerId,
+        }),
+      });
+  
+      if (!res.ok) throw new Error('Erro ao atualizar o item.');
+  
+      const updatedItem: Item = await res.json();
+      setItems((prev) =>
+        prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+      );
+  
+      setMessage('✅ Item atualizado com sucesso!');
+      setIsEditDialogOpen(false);
+      setEditingItem(null);
+    } catch (err: any) {
+      setMessage(`❌ ${err.message || 'Erro ao atualizar item.'}`);
+    }
+  };
+  
+  
 
   if (!token || !providerId) {
     return (
@@ -284,7 +335,11 @@ const DashboardItem = () => {
                 </p>
               </div>
               <div className="absolute rounded-full bg-white p-2 top-[3%] right-[3%] flex gap-2">
-                <Pencil className="w-5 h-5 text-blue-600 cursor-pointer" aria-label="Editar item" />
+                <Pencil
+                  className="w-5 h-5 text-blue-600 cursor-pointer"
+                  onClick={() => openEditDialog(item)}
+                  aria-label="Editar item"
+                />
                 <Trash2
                   className="w-5 h-5 text-red-600 cursor-pointer"
                   onClick={() => handleDeleteItem(item.id)}
@@ -294,6 +349,84 @@ const DashboardItem = () => {
             </div>
           ))}
         </div>
+
+                <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-lg font-semibold">Editar Produto</DialogTitle>
+              <DialogDescription>Atualize os dados do produto abaixo.</DialogDescription>
+            </DialogHeader>
+
+            <form className="space-y-4" onSubmit={handleEditItem}>
+              <Input
+                placeholder="Nome do Produto"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+              <Input
+                type="number"
+                placeholder="Preço"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+              />
+              <Input
+                type="text"
+                placeholder="Categoria"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              />
+              <Textarea
+                placeholder="Descrição"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+              {/* Upload de nova imagem (opcional) */}
+              <label
+                htmlFor="edit-upload"
+                className="flex items-center justify-center gap-2 cursor-pointer border border-dashed border-gray-400 rounded-xl p-4 hover:bg-gray-100 transition"
+              >
+                <CloudUpload className="w-5 h-5 text-blue-600" />
+                <span className="text-sm text-gray-700">
+                  {imageFile ? 'Nova imagem selecionada ✅' : 'Selecionar nova imagem'}
+                </span>
+                <input
+                  id="edit-upload"
+                  type="file"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setImageFile(file);
+                      handleImageUpload(file);
+                    }
+                  }}
+                />
+              </label>
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Preview"
+                  className="w-full h-40 object-cover rounded-lg border"
+                />
+              )}
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                disabled={uploading}
+              >
+                Atualizar
+              </Button>
+              {message && (
+                <p className="text-sm text-center text-red-500">{message}</p>
+              )}
+            </form>
+          </DialogContent>
+        </Dialog>
+
       </div>
     </div>
   );
