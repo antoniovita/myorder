@@ -53,7 +53,7 @@ const AccountPage = () => {
   return (
     <div className="flex min-h-screen bg-gray-50 text-gray-800">
 
-      <aside className="w-16 md:w-72 md:py-25 bg-white border-r p-4 md:p-6 shadow-sm py-20 transition-all duration-300 flex flex-col items-center md:items-start">
+      <aside className="w-16 md:w-72 md:mt-17 bg-white border-r p-4 md:p-6 py-20 transition-all duration-300 flex flex-col items-center md:items-start">
         <div className="space-y-1 w-full">
 
           <div className="text-xs uppercase text-gray-400 font-semibold mb-4 tracking-wider hidden md:block">
@@ -68,7 +68,7 @@ const AccountPage = () => {
                 className={`flex items-center md:justify-start justify-center gap-3 px-2 py-2 rounded-lg cursor-pointer transition
                   ${
                     activeTab === item.key
-                      ? "bg-orange-100 text-orange-600"
+                      ? "bg-blue-100 text-blue-600"
                       : "hover:bg-gray-100"
                   } 
                   ${item.disabled ? "text-gray-400 cursor-not-allowed" : ""}
@@ -84,7 +84,7 @@ const AccountPage = () => {
       </aside>
 
 
-      <main className="py-20 px-8 flex-1">{renderContent()}</main>
+      <main className="mt-20 px-8 flex-1">{renderContent()}</main>
     </div>
   );
 };

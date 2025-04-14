@@ -2,19 +2,18 @@ import { CheckCircle } from "lucide-react";
 
 const BusinessComponent = () => {
   return (
-    <section className="bg-white py-16 px-6 flex justify-center">
-      <div className="max-w-5xl w-full text-center md:text-left flex flex-col md:flex-row items-center gap-10">
+    <section className="bg-blue-900 py-20 px-6 flex justify-center">
+      <div className="max-w-6xl w-full text-center md:text-left flex flex-col md:flex-row items-center gap-16">
 
         <div className="flex-1">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
-            Dashboard ideal para o <span className="text-orange-400">seu negócio</span>
-          </h1>
-          <p className="text-lg text-gray-600 mt-4">
-            Transforme a experiência dos seus clientes com um cardápio digital
-            moderno, interativo e acessível de qualquer dispositivo.
+          <h2 className="text-4xl md:text-5xl font-bold text-white leading-snug">
+            Dashboard ideal para o <span className="text-yellow-400">seu negócio</span>
+          </h2>
+          <p className="text-lg md:text-xl text-gray-200 mt-6 max-w-xl">
+            Um sistema completo e fácil de usar para você criar, editar e publicar seu cardápio digital em tempo real.
           </p>
 
-          <div className="mt-8 space-y-4">
+          <div className="mt-10 space-y-4">
             {[
               "Fácil de atualizar em tempo real",
               "Visual atrativo e responsivo",
@@ -22,19 +21,18 @@ const BusinessComponent = () => {
               "Sem necessidade de impressão",
             ].map((item, index) => (
               <div key={index} className="flex items-start gap-3">
-                <CheckCircle className="text-orange-400 w-6 h-6 mt-1" />
-                <span className="text-gray-700 text-md mt-1">{item}</span>
+                <CheckCircle className="text-yellow-400 w-6 h-6 mt-1" />
+                <span className="text-white text-base">{item}</span>
               </div>
             ))}
           </div>
-
         </div>
 
         <div className="flex-1">
           <img
             src="https://res.cloudinary.com/demo/image/upload/sample.jpg"
             alt="Mockup de Cardápio Digital"
-            className="rounded-2xl shadow-lg w-full max-w-md mx-auto"
+            className="rounded-2xl shadow-xl w-full max-w-md mx-auto border-4 border-yellow-400"
           />
         </div>
       </div>

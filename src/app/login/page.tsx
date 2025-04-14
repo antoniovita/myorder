@@ -1,12 +1,10 @@
 'use client'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
 const LoginPage = () => {
     const router = useRouter();
-    const [isMobile, setIsMobile] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -15,17 +13,8 @@ const LoginPage = () => {
         password: '',
         cpf: '',
         phone: '',
-        owner: '' // novo campo
+        owner: ''
     });
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth <= 768);
-        };
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     const handleChange = (e: any) => {
         setFormData({
@@ -57,115 +46,157 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col md:flex-row justify-center gap-10 items-center bg-white px-4 relative">
-            {!isMobile && 
-            <div className='mt-6'>
-                <Image src={'/thinking1.png'} alt={''} width={400} height={400} />
-            </div>
-            }
-            <div className="w-full max-w-sm bg-white border border-gray-300 rounded-2xl mt-10 shadow-lg p-6 flex flex-col items-center">
-                <h1 className="font-bold text-xl mb-4 text-gray-800">{isRegistering ? 'Crie uma conta!' : 'Faça login'}</h1>
-                <p className="text-gray-600 text-sm mb-4">
-                    {isRegistering ? 'Preencha os campos abaixo para se registrar.' : 'Entre com seu email e senha para continuar'}
+        <div className="min-h-screen flex items-center justify-center bg-white px-4">
+            <div className="w-full max-w-2xl bg-white border mt-30 mb-30 border-gray-300 rounded-2xl shadow-xl p-8">
+                <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">
+                    {isRegistering ? 'Crie sua conta' : 'Faça login'}
+                </h1>
+                <p className="text-center text-sm text-gray-500 mb-6">
+                    {isRegistering
+                        ? 'Preencha os campos para registrar seu restaurante.'
+                        : 'Entre com seu email e senha'}
                 </p>
-                <div className="w-full">
-                    {isRegistering && (
+
+                <div className="space-y-4">
+                    {isRegistering ? (
                         <>
-                            <div className="flex flex-col gap-2 mb-3">
-                                <label htmlFor="name" className="text-gray-700 text-sm">Nome do Restaurante</label>
-                                <input 
-                                    id="name" 
-                                    type="text" 
-                                    placeholder="Seu restaurante" 
-                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                                    value={formData.name}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-sm text-gray-700" htmlFor="name">Nome do Restaurante</label>
+                                    <input
+                                        id="name"
+                                        type="text"
+                                        placeholder="Ex: Pizzaria do João"
+                                        className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-800 outline-none"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-sm text-gray-700" htmlFor="owner">Nome do Dono</label>
+                                    <input
+                                        id="owner"
+                                        type="text"
+                                        placeholder="João Silva"
+                                        className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-800 outline-none"
+                                        value={formData.owner}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-sm text-gray-700" htmlFor="phone">Telefone</label>
+                                    <input
+                                        id="phone"
+                                        type="text"
+                                        placeholder="(11) 98765-4321"
+                                        className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-800 outline-none"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-sm text-gray-700" htmlFor="cpf">CPF</label>
+                                    <input
+                                        id="cpf"
+                                        type="text"
+                                        placeholder="000.000.000-00"
+                                        className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-800 outline-none"
+                                        value={formData.cpf}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="text-sm text-gray-700" htmlFor="email">Email</label>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    placeholder="seuemail@exemplo.com"
+                                    className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-800 outline-none"
+                                    value={formData.email}
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className="flex flex-col gap-2 mb-3">
-                                <label htmlFor="owner" className="text-gray-700 text-sm">Nome do Dono</label>
-                                <input 
-                                    id="owner" 
-                                    type="text" 
-                                    placeholder="Nome completo do dono" 
-                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                                    value={formData.owner}
+
+                            <div>
+                                <label className="text-sm text-gray-700" htmlFor="password">Senha</label>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Crie uma senha segura"
+                                    className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-800 outline-none"
+                                    value={formData.password}
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className="flex flex-col gap-2 mb-3">
-                                <label htmlFor="description" className="text-gray-700 text-sm">Descrição</label>
-                                <input 
-                                    id="description" 
-                                    type="text" 
-                                    placeholder="Fale um pouco sobre seu negócio..." 
-                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+
+                            <div>
+                                <label className="text-sm text-gray-700" htmlFor="description">Descrição do Restaurante</label>
+                                <textarea
+                                    id="description"
+                                    placeholder="Fale um pouco sobre o seu negócio..."
+                                    className="w-full h-28 border border-gray-300 rounded-xl px-4 py-2 resize-none focus:ring-2 focus:ring-blue-800 outline-none"
                                     value={formData.description}
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className="flex flex-col gap-2 mb-3">
-                                <label htmlFor="cpf" className="text-gray-700 text-sm">CPF</label>
-                                <input 
-                                    id="cpf" 
-                                    type="text" 
-                                    placeholder="000.000.000-00" 
-                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                                    value={formData.cpf}
+                        </>
+                    ) : (
+                        <>
+                            {/* Email */}
+                            <div>
+                                <label className="text-sm text-gray-700" htmlFor="email">Email</label>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    placeholder="seuemail@exemplo.com"
+                                    className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-800 outline-none"
+                                    value={formData.email}
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className="flex flex-col gap-2 mb-3">
-                                <label htmlFor="phone" className="text-gray-700 text-sm">Telefone</label>
-                                <input 
-                                    id="phone" 
-                                    type="text" 
-                                    placeholder="(21) 91234-5678" 
-                                    className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                                    value={formData.phone}
+
+                            {/* Senha */}
+                            <div>
+                                <label className="text-sm text-gray-700" htmlFor="password">Senha</label>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Digite sua senha"
+                                    className="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-800 outline-none"
+                                    value={formData.password}
                                     onChange={handleChange}
                                 />
                             </div>
                         </>
                     )}
-                    <div className="flex flex-col gap-2 mb-3">
-                        <label htmlFor="email" className="text-gray-700 text-sm">Email</label>
-                        <input 
-                            id="email" 
-                            type="email" 
-                            placeholder="carlos@example.com" 
-                            className="w-full border-gray-300 text-black border rounded-xl px-3 py-2 focus:ring-1 focus:ring-gray-500 focus:outline-none"
-                            value={formData.email}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="flex flex-col gap-2 mb-3">
-                        <label htmlFor="password" className="text-gray-700 text-sm">Senha</label>
-                        <input 
-                            id="password" 
-                            type="password" 
-                            placeholder="Insira sua senha..." 
-                            className="w-full border-gray-300 border text-black rounded-xl px-3 py-2 focus:ring-1 focus:ring-gray-500 focus:outline-none"
-                            value={formData.password}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <button 
-                        className="w-full bg-orange-400 hover:bg-orange-600 text-white font-semibold py-2 rounded-xl mt-2 transition duration-300"
+
+                    {/* Botão */}
+                    <button
+                        className="w-full bg-blue-800 hover:bg-blue-800 text-white font-semibold py-2 rounded-xl transition duration-300"
                         onClick={handleSubmit}
                     >
-                        {isRegistering ? 'Criar Conta' : 'Entrar'}
+                        {isRegistering ? 'Registrar' : 'Entrar'}
                     </button>
+
+                    {/* Troca de modo */}
+                    <p className="text-center text-sm text-gray-600 mt-4">
+                        {isRegistering ? 'Já tem uma conta?' : 'Não tem uma conta?'}
+                        <button
+                            className="ml-1 text-blue-500 hover:underline"
+                            onClick={() => setIsRegistering(!isRegistering)}
+                        >
+                            {isRegistering ? 'Faça login' : 'Cadastre-se'}
+                        </button>
+                    </p>
                 </div>
-                <p className="text-gray-600 text-sm mt-4">
-                    {isRegistering ? 'Já tem uma conta?' : 'Ainda não tem uma conta?'}
-                    <button onClick={() => setIsRegistering(!isRegistering)} className="text-blue-500 hover:underline ml-1">
-                        {isRegistering ? 'Faça login' : 'Crie uma conta'}
-                    </button>
-                </p>
             </div>
         </div>
     );
-}
+};
 
 export default LoginPage;

@@ -115,7 +115,7 @@ const ProfileForm = () => {
   };
 
   return (
-    <div className="w-full p-6 mt-5 bg-white border border-gray-200 rounded-2xl shadow-md space-y-6">
+    <div className="w-full p-6 mt-5 bg-white border border-t border-gray-200 rounded-2xl shadow-md space-y-6">
       <h1 className="text-3xl font-bold">Meu Restaurante</h1>
 
       {error && (
@@ -181,7 +181,7 @@ const ProfileForm = () => {
             </div>
           )}
 
-          <label className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium">
+          <label className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition font-medium">
             <UploadCloud size={20} />
             {uploading ? "Enviando..." : "Selecionar Imagem"}
             <input

@@ -47,7 +47,6 @@ const DashboardItem = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
 
-  // Buscar token e providerId ao carregar
   useEffect(() => {
     const fetchAuthData = async () => {
       try {
@@ -63,7 +62,6 @@ const DashboardItem = () => {
     fetchAuthData();
   }, []);
 
-  // Buscar itens do provedor
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -319,7 +317,6 @@ const DashboardItem = () => {
           </Dialog>
         </div>
 
-        {/* Lista de Produtos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {items.map((item) => (
             <div
@@ -384,7 +381,7 @@ const DashboardItem = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 required
               />
-              {/* Upload de nova imagem (opcional) */}
+
               <label
                 htmlFor="edit-upload"
                 className="flex items-center justify-center gap-2 cursor-pointer border border-dashed border-gray-400 rounded-xl p-4 hover:bg-gray-100 transition"
