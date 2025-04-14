@@ -39,11 +39,11 @@ function Navbar({ providerId }: { providerId: string | null }) {
             <NavLink href={`/provider-page/${providerId}/items`} icon={Utensils}>
               Produtos
             </NavLink>
-            <NavLink href={`/provider-page/${providerId}/order`} icon={LayoutDashboard}>
-              Pedidos
-            </NavLink>
             <NavLink href={`/provider-page/${providerId}/cart`} icon={ShoppingCart}>
               Carrinho
+            </NavLink>
+            <NavLink href={`/provider-page/${providerId}/order`} icon={LayoutDashboard}>
+              Pedidos
             </NavLink>
           </div>
         </div>

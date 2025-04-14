@@ -138,7 +138,7 @@ const DashboardUser = () => {
           </div>
 
           <div className="flex gap-4 mb-6 flex-wrap">
-            <div className="border border-gray-300 rounded-2xl  w-full p-2 flex items-center w-full md:w-1/2 lg:w-1/3">
+            <div className="border border-gray-300 rounded-2xl p-2 flex items-center w-full md:w-1/2 lg:w-1/3">
               <Search className="text-gray-400 w-5 h-5 mr-2" />
               <input
                 type="text"
