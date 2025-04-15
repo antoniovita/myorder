@@ -10,10 +10,9 @@ const steps = [
 
 const HomeAdvantage = () => {
   return (
-    <section className="bg-white py-10 mb-20 px-6">
+    <section className="bg-white py-20 mb-20 px-6">
       <div className="max-w-6xl mx-auto flex flex-col items-center gap-16">
 
-        <h1 className='text-4xl text-blue-800 font-bold'> Como funciona? </h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (

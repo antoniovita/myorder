@@ -1,7 +1,8 @@
 'use client'
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Cookies from 'js-cookie';
+import { FcGoogle } from 'react-icons/fc';
 
 const LoginPage = () => {
     const router = useRouter();
@@ -45,10 +46,15 @@ const LoginPage = () => {
         }
     };
 
+    const handleGoogleLogin = () => {
+        // Aqui você pode integrar com sua lógica OAuth do Google
+        alert('Funcionalidade de login com Google ainda não implementada.');
+    };
+
     return (
-        <div className="min-h-screen flex items-center justify-center bg-white px-4">
-            <div className="w-full max-w-2xl bg-white border mt-30 mb-30 border-gray-300 rounded-2xl shadow-xl p-8">
-                <h1 className="text-2xl font-bold text-center text-gray-800 mb-2">
+        <div className="min-h-screen flex items-center py-20 justify-center bg-gradient-to-br from-blue-800 to-blue-600 px-4">
+            <div className="w-full max-w-2xl bg-white border border-gray-300 rounded-2xl shadow-2xl p-8">
+                <h1 className="text-3xl font-bold text-center text-blue-800 mb-2">
                     {isRegistering ? 'Crie sua conta' : 'Faça login'}
                 </h1>
                 <p className="text-center text-sm text-gray-500 mb-6">
@@ -147,7 +153,6 @@ const LoginPage = () => {
                         </>
                     ) : (
                         <>
-                            {/* Email */}
                             <div>
                                 <label className="text-sm text-gray-700" htmlFor="email">Email</label>
                                 <input
@@ -160,7 +165,6 @@ const LoginPage = () => {
                                 />
                             </div>
 
-                            {/* Senha */}
                             <div>
                                 <label className="text-sm text-gray-700" htmlFor="password">Senha</label>
                                 <input
@@ -175,19 +179,25 @@ const LoginPage = () => {
                         </>
                     )}
 
-                    {/* Botão */}
                     <button
-                        className="w-full bg-blue-800 hover:bg-blue-800 text-white font-semibold py-2 rounded-xl transition duration-300"
+                        className="w-full bg-blue-800 hover:bg-blue-900 hover:cursor-pointer text-white font-semibold py-3 rounded-xl transition duration-300"
                         onClick={handleSubmit}
                     >
                         {isRegistering ? 'Registrar' : 'Entrar'}
                     </button>
 
-                    {/* Troca de modo */}
+                    <button
+                        className="w-full bg-white border border-gray-300 text-gray-700 font-medium py-2 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-100 transition"
+                        onClick={handleGoogleLogin}
+                    >
+                        <FcGoogle className="w-5 h-5" />
+                        {isRegistering ? 'Registrar com Google' : 'Entrar com Google'}
+                    </button>
+
                     <p className="text-center text-sm text-gray-600 mt-4">
                         {isRegistering ? 'Já tem uma conta?' : 'Não tem uma conta?'}
                         <button
-                            className="ml-1 text-blue-500 hover:underline"
+                            className="ml-1 text-blue-500 hover:text-blue-800 hover:underline hover:cursor-pointer"
                             onClick={() => setIsRegistering(!isRegistering)}
                         >
                             {isRegistering ? 'Faça login' : 'Cadastre-se'}
