@@ -26,28 +26,61 @@ const LoginPage = () => {
 
     const handleSubmit = async () => {
         const action = isRegistering ? 'register' : 'login';
-        const response = await fetch('http://localhost:3000/api/provider', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                action,
-                ...formData
-            })
-        });
+        const url = 'http://localhost:3000/api/provider';
 
-        if (response.ok) {
-            const data = await response.json();
-            Cookies.set('token', data.token, { expires: 7 });
-            router.push('/business');
+        let payload;
+        if (isRegistering) {
+            payload = {
+                action,
+                name: formData.name,
+                description: formData.description,
+                email: formData.email,
+                password: formData.password,
+                cpf: formData.cpf,
+                phone: formData.phone,
+                owner: formData.owner
+            };
         } else {
-            console.error('Erro ao enviar dados');
+            payload = {
+                action,
+                email: formData.email,
+                password: formData.password
+            };
+        }
+
+        console.log('[DEBUG] Enviando dados para API:', payload);
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            console.log('[DEBUG] Status da resposta:', response.status);
+
+            const data = await response.json();
+            console.log('[DEBUG] Dados recebidos da API:', data);
+
+            if (response.ok) {
+                if (data.token) {
+                    Cookies.set('token', data.token, { expires: 7 });
+                    router.push('/business');
+                } else {
+                    alert('Token não recebido. Algo deu errado.');
+                }
+            } else {
+                alert(data.message || 'Erro ao enviar dados');
+            }
+        } catch (error) {
+            console.error('[ERRO] Falha na requisição:', error);
+            alert('Erro inesperado. Verifique o console para detalhes.');
         }
     };
 
     const handleGoogleLogin = () => {
-        // Aqui você pode integrar com sua lógica OAuth do Google
         alert('Funcionalidade de login com Google ainda não implementada.');
     };
 

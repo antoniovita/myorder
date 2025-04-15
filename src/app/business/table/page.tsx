@@ -161,9 +161,7 @@ const DashboardTable = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          tableId,
-        })
+        body: JSON.stringify({ tableId }),
       });
 
       if (!res.ok) {
@@ -226,14 +224,14 @@ const DashboardTable = () => {
     </div>
   ) : (
     <div className="min-h-screen bg-gray-100 p-4 flex justify-center items-start">
-      <div className="bg-white p-3 rounded-2xl border border-gray-300 w-full space-y-6 shadow-lg">
-        <div className="flex flex-col sm:flex-row justify-between px-4 items-start sm:items-center gap-3 mb-4">
-          <div className="flex items-center gap-2">
-            <LayoutGrid className="text-blue-600" />
-            <h1 className="text-2xl font-bold text-blue-700">Mesas</h1>
+      <div className="w-full space-y-6">
+        
+        <div className="flex flex-col sm:flex-row justify-between px-4 items-start sm:items-center gap-3 mb-4 bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
+          <div className="flex items-center gap-2 ">
+            <LayoutGrid className="text-blue-600 w-5 h-5" />
+            <h1 className="text-xl text-blue-600 font-semibold">Mesas</h1>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-
             <div className="relative w-full sm:w-auto">
               <input
                 type="number"
@@ -262,9 +260,11 @@ const DashboardTable = () => {
             </button>
           </div>
         </div>
+
         {createError && <p className="text-red-500 px-4 text-sm">{createError}</p>}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Lista de mesas em flex-col */}
+        <div className="flex flex-col gap-4">
           {filteredTables.length > 0 ? (
             filteredTables.map((table) => {
               const hasOrders = table.order && table.order.length > 0;
@@ -282,8 +282,6 @@ const DashboardTable = () => {
                         <h2 className="font-semibold text-gray-800">Mesa {table.number}</h2>
                         <p className="text-sm text-gray-500">{table.user?.length || 0} cliente(s)</p>
                       </div>
-                      {hasOrders && (expandedTable === table.id ? <ChevronUp className="text-gray-600" /> : <ChevronDown className="text-gray-600" />)}
-
                       <div className="flex gap-2 mt-4">
                         <button
                           className="text-red-600 hover:text-red-800"
