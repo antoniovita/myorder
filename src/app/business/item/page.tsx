@@ -249,8 +249,8 @@ const DashboardItem = () => {
         {/* Header */}
         <div className="bg-white border border-gray-200 px-4 py-4 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div className="flex items-center gap-2">
-            <Utensils className="text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-800">Produtos</h1>
+            <Utensils className="text-blue-600 h-4 w-4" />
+            <h1 className="text-md font-bold text-blue-600">Produtos</h1>
           </div>
   
           <Dialog>

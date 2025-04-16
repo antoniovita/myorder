@@ -138,7 +138,7 @@ const BusinessPage = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
       <Card>
         <CardHeader className="flex items-center gap-2 text-blue-600">
           <Users className="w-5 h-5" />

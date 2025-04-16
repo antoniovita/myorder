@@ -50,7 +50,7 @@ const HomePresent = () => {
         </div>
       </div>
 
-      <div className="hidden md:block absolute bottom-0 right-10 lg:right-10 xl:right-20 2xl:right-60 w-[45%] max-w-[500px] lg:max-w-[600px]">
+      <div className="hidden md:block absolute bottom-0 right-10 lg:right-10 xl:right-20 2xl:right-60 w-[45%] max-w-[500px] lg:max-w-[450px]">
         <Image
           src="/chef.png"
           alt="Cardápio Digital"
