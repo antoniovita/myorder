@@ -225,8 +225,10 @@ const DashboardItem = () => {
                 <img src={item.imgUrl} alt={item.name} className="w-full h-44 object-cover" />
                 <div className="p-4 space-y-1">
                   <h2 className="text-base font-semibold text-gray-800">{item.name}</h2>
-                  <p className="text-sm text-gray-500 line-clamp-2">{item.description}</p>
-                  <p className="text-lg text-blue-700 font-bold">R$ {item.price.toFixed(2)}</p>
+                  <p className="text-sm text-gray-500 line-clamp-1">{item.description}</p>
+                  <div className='flex'>
+                    <p className="text-lg bg-gray-100 flex p-2 rounded-lg text-black font-bold">R$ {item.price.toFixed(2)}</p>
+                  </div>
                 </div>
                 <div className="absolute top-3 right-3 bg-white rounded-full shadow-sm p-1.5 flex gap-1">
                   <Pencil className="w-5 h-5 text-blue-600 cursor-pointer" onClick={() => openEditDialog(item)} />

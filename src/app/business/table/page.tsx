@@ -223,7 +223,7 @@ const DashboardTable = () => {
       </p>
     </div>
   ) : (
-    <div className="min-h-screen bg-gray-100 px-4 flex justify-center items-start">
+    <div className="min-h-screen bg-gray-50 px-4 flex justify-center items-start">
       <div className="w-full space-y-3">
         
         <div className="sm:flex sm:justify-center sm:items-center">
