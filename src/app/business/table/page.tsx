@@ -227,9 +227,9 @@ const DashboardTable = () => {
       <div className="w-full space-y-6">
         
         <div className="flex flex-col sm:flex-row justify-between px-4 items-start sm:items-center gap-3 mb-4 bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
-          <div className="flex items-center gap-2 ">
-            <LayoutGrid className="text-blue-600 w-5 h-5" />
-            <h1 className="text-xl text-blue-600 font-semibold">Mesas</h1>
+          <div className="flex items-center gap-1 px-2 ">
+            <LayoutGrid className="text-blue-600 w-4 h-4" />
+            <h1 className="text-md text-blue-600 font-semibold">Mesas</h1>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <div className="relative w-full sm:w-auto">

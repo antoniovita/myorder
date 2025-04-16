@@ -7,7 +7,8 @@ import {
   ShoppingCart,
   Clock,
   DollarSign,
-  User
+  User,
+  CircleCheck
 } from 'lucide-react';
 import {
   Card,
@@ -201,41 +202,93 @@ const BusinessPage = () => {
       </Card>
 
       <Card>
-        <CardHeader className="flex items-center gap-2 text-blue-600">
-          <ShoppingCart className="w-5 h-5" />
-          <CardTitle>Pedidos</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {orders.length ? (
-            orders.map((order) => (
-              <div key={order.id} className="border p-3 rounded-xl space-y-1">
-                <div className="flex justify-between text-sm text-gray-700">
-                  <span>Cliente: {order.user.name}</span>
-                  <span>Mesa {order.table.number}</span>
+  <CardHeader className="flex items-center gap-2 text-blue-600">
+    <ShoppingCart className="w-5 h-5" />
+    <CardTitle>Pedidos</CardTitle>
+  </CardHeader>
+  <CardContent className="space-y-4">
+    {orders.length ? (
+      orders.map((order) => {
+        const getStatusStyle = (status: string) => {
+          switch (status) {
+            case 'ativo':
+              return {
+                color: 'bg-green-600',
+                icon: <Clock className="w-3 h-3 text-white" />,
+                label: 'Ativo',
+              };
+            case 'finalizado':
+              return {
+                color: 'bg-yellow-500',
+                icon: <CircleCheck className="w-3 h-3 text-white" />,
+                label: 'Finalizado',
+              };
+            case 'cancelado':
+              return {
+                color: 'bg-red-600',
+                icon: <CircleCheck className="w-3 h-3 text-white rotate-45" />,
+                label: 'Cancelado',
+              };
+            default:
+              return {
+                color: 'bg-gray-500',
+                icon: <CircleCheck className="w-3 h-3 text-white" />,
+                label: status,
+              };
+          }
+        };
+
+        const { color, icon, label } = getStatusStyle(order.status);
+
+        return (
+          <div
+            key={order.id}
+            className="border p-4 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow space-y-4"
+          >
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-3">
+                <div className="bg-blue-100 text-blue-600 p-2 rounded-full">
+                  <ShoppingCart className="w-5 h-5" />
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>Status: {order.status}</span>
-                  <span className="flex items-center gap-1">
-                    <DollarSign className="w-4 h-4" /> R$ {order.price}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {new Date(order.date).toLocaleString('pt-BR', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </span>
+                <div className="flex flex-col">
+                  <span className="text-base font-semibold text-gray-800">{order.user.name}</span>
+                  <span className="text-sm text-gray-500">Mesa {order.table.number}</span>
                 </div>
               </div>
-            ))
-          ) : (
-            <p className="text-gray-400">Nenhum pedido encontrado.</p>
-          )}
-        </CardContent>
-      </Card>
+              <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
+                <Clock className="w-3 h-3 text-gray-400" />
+                {new Date(order.date).toLocaleString('pt-BR', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <div className={`flex items-center gap-1 px-2 border border-green-500 py-[2px] rounded-full text-white text-sm ${color}`}>
+                {icon}
+                <h1>{label}</h1>
+              </div>
+
+              <div className="bg-gray-100 px-3 py-1 rounded-lg text-sm font-semibold text-gray-800">
+                R$ {order.price.toFixed(2)}
+              </div>
+            </div>
+          </div>
+        );
+      })
+    ) : (
+      <p className="text-gray-400">Nenhum pedido encontrado.</p>
+    )}
+  </CardContent>
+</Card>
+
+
+
+
     </div>
   );
 };
