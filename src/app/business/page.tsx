@@ -140,10 +140,7 @@ const BusinessPage = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
       <Card>
-        <CardHeader className="flex items-center gap-2 text-blue-600">
-          <Users className="w-5 h-5" />
-          <CardTitle>Clientes ({clients.length})</CardTitle>
-        </CardHeader>
+        
         <CardContent className="space-y-2">
           {clients.length ? (
             clients.map((client) => (
@@ -164,10 +161,7 @@ const BusinessPage = () => {
       </Card>
 
       <Card>
-        <CardHeader className="flex items-center gap-2 text-blue-600">
-          <TableIcon className="w-5 h-5" />
-          <CardTitle>Mesas</CardTitle>
-        </CardHeader>
+        
         <CardContent className="space-y-3">
           {tables.length ? (
             tables.map((table) => {
@@ -202,10 +196,7 @@ const BusinessPage = () => {
       </Card>
 
       <Card>
-  <CardHeader className="flex items-center gap-2 text-blue-600">
-    <ShoppingCart className="w-5 h-5" />
-    <CardTitle>Pedidos</CardTitle>
-  </CardHeader>
+  
   <CardContent className="space-y-4">
     {orders.length ? (
       orders.map((order) => {

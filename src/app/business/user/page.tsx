@@ -132,14 +132,8 @@ const DashboardUser = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="px-6">
       <Card className="mb-6">
-        <CardHeader className="flex flex-col md:flex-row md:items-center gap-2">
-          <div className="flex items-center gap-2 text-blue-600">
-            <Users className="w-5 h-5" />
-            <CardTitle>Clientes ({filteredClients.length})</CardTitle>
-          </div>
-        </CardHeader>
         <CardContent className="flex flex-col md:flex-row gap-4">
           <div className="flex items-center border border-gray-300 rounded-xl px-3 w-full md:w-1/2">
             <Search className="text-gray-400 w-4 h-4 mr-2" />

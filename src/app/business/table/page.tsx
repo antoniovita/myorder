@@ -223,14 +223,12 @@ const DashboardTable = () => {
       </p>
     </div>
   ) : (
-    <div className="min-h-screen bg-gray-100 p-4 flex justify-center items-start">
-      <div className="w-full space-y-6">
+    <div className="min-h-screen bg-gray-100 px-4 flex justify-center items-start">
+      <div className="w-full space-y-3">
         
-        <div className="flex flex-col sm:flex-row justify-between px-4 items-start sm:items-center gap-3 mb-4 bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
-          <div className="flex items-center gap-1 px-2 ">
-            <LayoutGrid className="text-blue-600 w-4 h-4" />
-            <h1 className="text-md text-blue-600 font-semibold">Mesas</h1>
-          </div>
+        <div className="sm:flex sm:justify-center sm:items-center">
+        <div className="flex flex-col sm:flex-row items-start max-w-2xl justify-center rounded-3xl sm:items-center gap-3 mb-4 bg-white p-4 shadow-sm border border-gray-200">
+
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <div className="relative w-full sm:w-auto">
               <input
@@ -260,12 +258,13 @@ const DashboardTable = () => {
             </button>
           </div>
         </div>
+        </div>
 
         {createError && <p className="text-red-500 px-4 text-sm">{createError}</p>}
 
         {/* Lista de mesas em flex-col */}
-        <div className="flex flex-col gap-4">
-          {filteredTables.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        {filteredTables.length > 0 ? (
             filteredTables.map((table) => {
               const hasOrders = table.order && table.order.length > 0;
               const latestOrder = hasOrders && table.order[table.order.length - 1];

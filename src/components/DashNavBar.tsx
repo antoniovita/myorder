@@ -18,7 +18,7 @@ export default function DashNavBar() {
   ]
 
   return (
-    <div className='bg-gray-100 py-4'>
+    <div className='bg-gray-50 py-4'>
     <nav className="w-full flex justify-center px-4">
       <div className="w-full max-w-md bg-white border border-gray-200 rounded-full px- py-4 backdrop-blur-md">
         <div className="flex justify-between items-center">

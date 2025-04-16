@@ -86,7 +86,7 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen flex items-center py-20 justify-center bg-gradient-to-br from-blue-800 to-blue-600 px-4">
-            <div className="w-full max-w-2xl bg-white border border-gray-300 rounded-2xl shadow-2xl p-8">
+            <div className="w-full max-w-xl bg-white border border-gray-300 rounded-2xl shadow-2xl p-8">
                 <h1 className="text-3xl font-bold text-center text-blue-800 mb-2">
                     {isRegistering ? 'Crie sua conta' : 'Faça login'}
                 </h1>
