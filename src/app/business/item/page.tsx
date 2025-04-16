@@ -6,6 +6,7 @@ import {
   Plus,
   Trash2,
   Search as SearchIcon,
+  X,
 } from "lucide-react";
 
 import { supabase } from "@/lib/supabase";
@@ -51,9 +52,6 @@ const getImagePathFromUrl = (url: string) =>
   decodeURIComponent(url.split("/images/")[1] ?? "");
 
 
-  /**
-   * Memoized list filtered by the search bar
-   */
   const filteredItems = useMemo(
     () =>
       items.filter((item) =>
@@ -254,20 +252,31 @@ const getImagePathFromUrl = (url: string) =>
     <>
       <div className="flex w-full px-4 min-h-screen justify-center bg-gray-50">
         <div className="w-full max-w-screen-xl space-y-10">
-          {/* Barra de pesquisa */}
-          <div className="sticky top-4 z-30 bg-gray-50 pt-6">
-            <div className="mx-auto w-full max-w-md relative">
-              <Input
-                placeholder="Pesquisar produto..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-              <SearchIcon className="w-4 h-4 absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
+
+        <div className="sticky top-4 z-30 pt-6">
+            <div className="mx-auto w-full max-w-md">
+              <div className="flex flex-row items-center gap-3 bg-white/90 shadow-sm ring-1 ring-gray-300 backdrop-blur-sm px-4 py-2 rounded-full transition ">
+                <SearchIcon className="w-5 h-5 text-gray-400 shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Pesquisar produto..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-transparent text-sm placeholder-gray-400 focus:outline-none"
+                />
+                {searchTerm && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchTerm("")}
+                    className="text-gray-400 hover:text-gray-600 transition"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Produtos */}
           {filteredItems.length === 0 ? (
             <p className="text-center text-gray-500">Nenhum produto encontrado.</p>
           ) : (
@@ -287,7 +296,7 @@ const getImagePathFromUrl = (url: string) =>
                       <h2 className="text-base font-semibold text-gray-800 flex-1 line-clamp-1">
                         {item.name}
                       </h2>
-                      {/* Categoria como badge */}
+
                       <span className="text-xs font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
                         {item.category}
                       </span>
