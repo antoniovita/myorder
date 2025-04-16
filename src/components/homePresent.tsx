@@ -35,8 +35,6 @@ const HomePresent = () => {
           </Link>
         </div>
 
-
-          {/* Imagem visível apenas em telas pequenas */}
           <div className="mt-6 w-full max-w-xl md:hidden">
             <Image
               src="/chef.png"
@@ -50,7 +48,7 @@ const HomePresent = () => {
         </div>
       </div>
 
-      <div className="hidden md:block absolute bottom-0 right-10 lg:right-10 xl:right-20 2xl:right-60 w-[45%] max-w-[500px] lg:max-w-[450px]">
+      <div className="hidden md:block absolute bottom-0 right-10 lg:right-10 xl:right-20 2xl:right-60 w-[45%] max-w-[500px] lg:max-w-[450px] xl:max-w-[500px] 2xl:max-w-[600px] z-0">
         <Image
           src="/chef.png"
           alt="Cardápio Digital"

@@ -22,6 +22,7 @@ export const POST = async (req: NextRequest) => {
                 description: body.description,
                 providerId: auth.id,
                 imgUrl: body.imgUrl,
+                category: body.category,
             },
         });
 
