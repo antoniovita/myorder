@@ -71,8 +71,11 @@ const OrderPage = () => {
     );
   };
 
+  const formatBRL = (v: number) =>
+    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pb-28">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-28">
 
       {loading ? (
         <p className="text-gray-500 text-center">Carregando...</p>
@@ -86,7 +89,7 @@ const OrderPage = () => {
               <div
                 onClick={() => toggleOrder(order.id)}
                 key={order.id}
-                className="border border-gray-200 rounded-2xl p-6 bg-white hover:shadow-md transition duration-200 cursor-pointer"
+                className="border-b border-gray-200 p-6 bg-gray-white transition duration-200 cursor-pointer"
               >
                 <div
                   className="flex items-center justify-between"
@@ -107,8 +110,8 @@ const OrderPage = () => {
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <p className="text-sm text-gray-500">Total</p>
-                      <p className="text-lg font-bold text-black">
-                        R$ {order.price.toFixed(2)}
+                      <p className="text-lg font-normal text-black">
+                        {formatBRL(order.price)}
                       </p>
                     </div>
                   </div>
@@ -116,7 +119,7 @@ const OrderPage = () => {
 
                 <div className="mt-4">
                   <p className="text-sm text-gray-500">Status</p>
-                  <p className="font-semibold text-blue-600 capitalize">{order.status}</p>
+                  <p className="font-semibold text-green-600 capitalize">{order.status}</p>
                 </div>
 
                 {isExpanded && (

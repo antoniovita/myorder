@@ -94,8 +94,8 @@ export default function ItemsPage() {
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className={`w-full pl-4 pr-10 py-2.5 rounded-full bg-white/90 backdrop-blur
-            ring-1 ring-gray-200 focus:ring-blue-500 focus:outline-none appearance-none transition
+          className={`w-full pl-4 pr-10 py-2.5 rounded-full border bg-white/90 backdrop-blur
+            focus:outline-none appearance-none transition
             text-gray-400 sm:text-base text-sm`}
         >
           <option value="">Todas as categorias</option>
