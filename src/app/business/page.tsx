@@ -8,7 +8,8 @@ import {
   Clock,
   DollarSign,
   User,
-  CircleCheck
+  CircleCheck,
+  CircleUserRound
 } from 'lucide-react';
 import {
   Card,
@@ -137,6 +138,13 @@ const BusinessPage = () => {
     return <div className="text-center mt-10 text-red-500">{error}</div>;
   }
 
+  const formatBRL = (v: number) =>
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+    }).format(v);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
       <Card>
@@ -144,10 +152,10 @@ const BusinessPage = () => {
         <CardContent className="space-y-2">
           {clients.length ? (
             clients.map((client) => (
-              <div key={client.id} className="border p-3 rounded-xl flex justify-between items-center">
+              <div key={client.id} className="border p-3 rounded-2xl flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <div className="bg-blue-100 text-blue-600 p-2 rounded-full">
-                    <User className="w-5 h-5" />
+                    <User className="w-4 h-4" />
                   </div>
                   <span className="font-medium text-gray-700">{client.name}</span>
                 </div>
@@ -180,8 +188,8 @@ const BusinessPage = () => {
                   {isExpanded && (
                     <ul className="mt-3 space-y-2">
                       {table.user.map((u) => (
-                        <li key={u.id} className="flex items-center gap-2 text-sm text-gray-600">
-                          <User className="w-4 h-4 text-blue-500" /> {u.name}
+                        <li key={u.id} className="flex items-center gap-1 text-sm text-gray-600">
+                          <CircleUserRound className="w-3.5 h-3.5 text-gray-500" /> <h1 className='text-gray-500'>{u.name}</h1>
                         </li>
                       ))}
                     </ul>
@@ -205,31 +213,27 @@ const BusinessPage = () => {
             case 'ativo':
               return {
                 color: 'bg-green-600',
-                icon: <Clock className="w-3 h-3 text-white" />,
-                label: 'Ativo',
+                label: 'Pedido ativo',
               };
             case 'finalizado':
               return {
                 color: 'bg-yellow-500',
-                icon: <CircleCheck className="w-3 h-3 text-white" />,
-                label: 'Finalizado',
+                label: 'Pedido finalizado',
               };
             case 'cancelado':
               return {
                 color: 'bg-red-600',
-                icon: <CircleCheck className="w-3 h-3 text-white rotate-45" />,
-                label: 'Cancelado',
+                label: 'Pedido cancelado',
               };
             default:
               return {
                 color: 'bg-gray-500',
-                icon: <CircleCheck className="w-3 h-3 text-white" />,
                 label: status,
               };
           }
         };
 
-        const { color, icon, label } = getStatusStyle(order.status);
+        const { color,  label } = getStatusStyle(order.status);
 
         return (
           <div
@@ -242,8 +246,8 @@ const BusinessPage = () => {
                   <ShoppingCart className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-base font-semibold text-gray-800">{order.user.name}</span>
-                  <span className="text-sm text-gray-500">Mesa {order.table.number}</span>
+                  <span className="text-base font-normal text-gray-800">{order.user.name}</span>
+                  <span className="text-sm text-gray-500 font-normal">Mesa {order.table.number}</span>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
@@ -259,13 +263,12 @@ const BusinessPage = () => {
             </div>
 
             <div className="flex justify-between items-center">
-              <div className={`flex items-center gap-1 px-2 border border-green-500 py-[2px] rounded-full text-white text-sm ${color}`}>
-                {icon}
+              <div className={`flex items-center font-normal gap-1 px-2 py-[2px] rounded-full text-white text-sm ${color}`}>
                 <h1>{label}</h1>
               </div>
 
-              <div className="bg-gray-100 px-3 py-1 rounded-lg text-sm font-semibold text-gray-800">
-                R$ {order.price.toFixed(2)}
+              <div className="px-3 py-1 text-lg font-normal text-black">
+                {formatBRL(order.price)}
               </div>
             </div>
           </div>

@@ -150,6 +150,14 @@ const getImagePathFromUrl = (url: string) =>
     }
   };
 
+  const formatBRL = (v: number) =>
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+    }).format(v);
+  
+
   const handleCreateItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!imageUrl) {
@@ -280,7 +288,7 @@ const getImagePathFromUrl = (url: string) =>
           {filteredItems.length === 0 ? (
             <p className="text-center text-gray-500">Nenhum produto encontrado.</p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredItems.map((item) => (
                 <div
                   key={item.id}
@@ -289,28 +297,28 @@ const getImagePathFromUrl = (url: string) =>
                   <img
                     src={item.imgUrl}
                     alt={item.name}
-                    className="w-full h-44 object-cover"
+                    className="w-full h-80 sm:h-60 object-cover"
                   />
                   <div className="p-4 space-y-1">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base font-semibold text-gray-800 flex-1 line-clamp-1">
+                      <h2 className="text-base font-normal text-gray-800 flex-1 line-clamp-1">
                         {item.name}
                       </h2>
 
-                      <span className="text-xs font-medium bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                      <span className="text-xs font-medium bg-black text-white px-2 py-0.5 rounded-full">
                         {item.category}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 line-clamp-2">
+                    <p className="text-sm text-gray-500 line-clamp-3 py-1">
                       {item.description}
                     </p>
                     <div className="flex">
-                      <p className="text-lg bg-gray-100 flex p-2 rounded-lg text-black font-bold">
-                        R$ {item.price.toFixed(2)}
+                      <p className="text-lg flex py-2 rounded-lg text-black font-lg">
+                        {formatBRL(item.price)}
                       </p>
                     </div>
                   </div>
-                  <div className="absolute top-3 right-3 bg-white rounded-full shadow-sm p-1.5 flex gap-1">
+                  <div className="absolute top-3 right-3 bg-white rounded-lg shadow-md p-2 px-3 flex gap-1.5">
                     <Pencil
                       className="w-5 h-5 text-blue-600 cursor-pointer"
                       onClick={() => openEditDialog(item)}
@@ -320,6 +328,7 @@ const getImagePathFromUrl = (url: string) =>
                       onClick={() => handleDeleteItem(item.id)}
                     />
                   </div>
+
                 </div>
               ))}
             </div>

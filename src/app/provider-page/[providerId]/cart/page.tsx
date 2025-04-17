@@ -96,8 +96,16 @@ const CartPage = () => {
   );
 
 
+
+  const formatBRL = (v: number) =>
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+    }).format(v);
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 pb-28 sm:pb-0">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-28 sm:pb-0">
       {cartItems.length === 0 ? (
         <p className="text-gray-500 text-center text-base sm:text-lg">O carrinho está vazio.</p>
       ) : (
@@ -105,16 +113,16 @@ const CartPage = () => {
           {cartItems.map((item) => (
             <div
               key={item.id}
-              className="relative flex flex-row items-center gap-4 sm:gap-6 bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition"
+              className="relative flex flex-row items-center gap-4 p-2 sm:gap-6 bg-white sm:p-4 border-gray-200 border-b sm:border-0"
             >
               <button
                 onClick={() => handleDeleteItem(item.id)}
-                className="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition"
+                className="absolute top-3 sm:right-5 right-2 p-1 hover:cursor-pointer text-red-500 transition"
               >
                 <Trash2 size={18} />
               </button>
 
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-md overflow-hidden border border-gray-100">
+              <div className="relative w-25 h-25 sm:w-30 sm:h-30 rounded-md overflow-hidden border border-gray-100">
                 <Image
                   src={item.imgUrl}
                   alt={item.name}
@@ -124,37 +132,37 @@ const CartPage = () => {
               </div>
 
               <div className="flex-1 w-full">
-                <h2 className="text-base sm:text-lg font-medium text-gray-800">{item.name}</h2>
+                <h2 className="text-[15px] sm:text-lg font-medium text-gray-800">{item.name}</h2>
                 {item.description && (
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">{item.description}</p>
+                  <p className="text-[12px] max-w-[300px] sm:text-sm sm:max-w-[1000px] text-gray-500 mt-1 line-clamp-2">{item.description}</p>
                 )}
 
-                <div className="mt-2 sm:mt-3 flex flex-row items-center justify-between gap-3">
-                  <div className="flex items-center rounded-md border border-gray-300 bg-gray-50 overflow-hidden">
+                <div className=" flex flex-row items-center justify-between gap-3">
+                  <div className="flex sm:py-1.25 py-1.25 items-center rounded-xl bg-gray-100 overflow-hidden">
                     <button
-                      className="px-3 py-1 text-gray-700 hover:bg-gray-100 transition"
+                      className="px-3 py-1 text-gray-700 hover:cursor-pointer transition"
                       onClick={() => handleQuantityChange(item.id, -1)}
                     >
                       <Minus size={14} />
                     </button>
-                    <span className="px-4 py-1 text-sm font-medium text-gray-800 bg-white">
+                    <span className="px-4 py-1 text-sm font-medium text-gray-800 bg-transparent">
                       {item.quantity || 1}
                     </span>
                     <button
-                      className="px-3 py-1 text-gray-700 hover:bg-gray-100 transition"
+                      className="px-3 py-1 text-gray-700 hover:cursor-pointer transition"
                       onClick={() => handleQuantityChange(item.id, 1)}
                     >
                       <Plus size={14} />
                     </button>
                   </div>
 
-                  <div className="text-right text-sm text-gray-700">
-                    <span className="text-gray-500">
-                      R$ {item.price.toFixed(2)} x {item.quantity}
+                  <div className="text-right text-gray-700 py-2 px-3">
+                    <span className="text-gray-500 font-light text-[12px]">
+                      {formatBRL(item.price)} x {item.quantity}
                     </span>
                     <br />
-                    <span className="font-semibold text-gray-900">
-                      R$ {(item.price * (item.quantity || 1)).toFixed(2)}
+                    <span className="font-normal text-[18px] sm:text-lg text-gray-900">
+                    {formatBRL(item.price)}
                     </span>
                   </div>
                 </div>
@@ -163,12 +171,12 @@ const CartPage = () => {
           ))}
 
           <div className="hidden sm:flex mt-10 border-t pt-5 items-center justify-between">
-            <p className="text-xl font-semibold text-gray-900">
-              Total: <span className="text-blue-600">R$ {total.toFixed(2)}</span>
+            <p className="text-xl font-normal text-gray-900">
+              Total: <span className="font-bold">{formatBRL(total)}</span>
             </p>
             <button
               onClick={createOrder}
-              className="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-3 rounded-lg font-medium text-base"
+              className="bg-blue-500 hover:bg-blue-600 transition font-bold hover:cursor-pointer text-white px-6 py-3 rounded-xl text-base"
             >
               Finalizar Pedido
             </button>
@@ -178,12 +186,12 @@ const CartPage = () => {
 
       {cartItems.length > 0 && (
         <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-4 py-4 flex items-center justify-between shadow-md">
-          <p className="text-lg font-semibold text-gray-900">
-            Total: <span className="text-blue-600">R$ {total.toFixed(2)}</span>
+          <p className="text-lg font-normal text-gray-900">
+            Total: <span className="font-bold">{formatBRL(total)}</span>
           </p>
           <button
             onClick={createOrder}
-            className="bg-blue-600 hover:bg-blue-700 transition text-white px-5 py-2.5 rounded-lg font-medium text-sm"
+            className="bg-blue-500 hover:bg-blue-600 hover:cursor-pointer transition text-white  px-10 py-2.5 rounded-xl font-bold text-md"
           >
             Finalizar
           </button>
