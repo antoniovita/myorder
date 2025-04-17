@@ -3,8 +3,8 @@ import Link from "next/link";
 
 const AboutUs = () => {
   return (
-    <section className="bg-gray-50 py-20 px-4 flex justify-center">
-      <div className="w-full max-w-6xl flex flex-col-reverse md:flex-row items-center gap-16">
+    <section className="bg-white py-20 px-4 flex justify-center">
+      <div className="w-full max-w-6xl flex flex-col-reverse md:flex-row items-center sm:gap-16">
 
         <div className="flex-1 text-center md:text-left">
           <h2 className="text-4xl md:text-5xl font-bold text-blue-900 leading-snug">
@@ -15,7 +15,7 @@ const AboutUs = () => {
           </p>
           <Link
             href="/about"
-            className="inline-block mt-8 bg-blue-600 text-white px-6 py-3 rounded-full font-semibold text-base shadow-md hover:bg-blue-700 transition"
+            className="inline-block mt-8 bg-blue-600 text-white px-6 py-3 rounded-full font-semibold text-base hover:bg-blue-700 transition"
           >
             Saiba mais
           </Link>
@@ -27,7 +27,7 @@ const AboutUs = () => {
             width={500}
             height={500}
             alt="Sobre nós"
-            className="w-full max-w-md rounded-xl shadow-xl object-cover"
+            className="w-full max-w-md rounded-xl object-cover"
           />
         </div>
       </div>

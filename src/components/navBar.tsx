@@ -58,7 +58,7 @@ export default function NavBar() {
         {/* Ações - desktop */}
         <div className="hidden md:flex items-center gap-4">
           <Link
-            href="/create"
+            href="/business"
             className="bg-gray-100 text-black text-sm font-medium p-3 rounded-xl flex items-center gap-2 hover:bg-gray-100 transition"
           >
             Criar cardápio
@@ -91,14 +91,14 @@ export default function NavBar() {
 
       {/* Menu mobile */}
       {isOpen && (
-        <div className="md:hidden mt-4 px-4 py-4 bg-white rounded-lg flex flex-col gap-4 text-black font-medium">
-          <Link href="/business" className="hover:text-blue-800 transition">Dashboard</Link>
-          <Link href="/services" className="flex items-center gap-2">
-            <Briefcase size={18} /> Planos
+        <div className="md:hidden text-xl mt-4 px-4 py-4 bg-white rounded-lg flex flex-col gap-4 text-black font-medium">
+          <Link href="/business" className="hover:text-blue-800  border-b py-3 transition">Dashboard</Link>
+          <Link href="/services" className="flex items-center gap-2 border-b py-3">
+           Planos
           </Link>
-          <Link href="/about" className="hover:text-blue-800 transition">Sobre nós</Link>
+          <Link href="/about" className="hover:text-blue-800 transition border-b py-3">Sobre nós</Link>
           <Link href="/create" className="flex items-center gap-2">
-            <PlusCircle size={18} /> Criar cardápio
+           Criar cardápio
           </Link>
         </div>
       )}

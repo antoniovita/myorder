@@ -115,7 +115,7 @@ const ProfileForm = () => {
   };
 
   return (
-    <div className="w-full p-6 mt-5 bg-white border border-t border-gray-200 rounded-2xl shadow-md space-y-6">
+    <div className="w-full p-6 mt-5 bg-white border border-t border-gray-200 rounded-lg shadow-md space-y-6">
       <h1 className="text-3xl font-bold">Meu Restaurante</h1>
 
       {error && (
@@ -139,22 +139,22 @@ const ProfileForm = () => {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="name">Nome</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} disabled={loading} />
+            <Input  className='text-sm' id="name" value={name} onChange={(e) => setName(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="cpf">CPF</Label>
-            <Input id="cpf" value={cpf} onChange={(e) => setCpf(e.target.value)} disabled={loading} />
+            <Input  className='text-sm' id="cpf" value={cpf} onChange={(e) => setCpf(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="phone">Número</Label>
-            <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} />
+            <Input className='text-sm' id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="owner">Responsável</Label>
-            <Input id="owner" value={owner} onChange={(e) => setOwner(e.target.value)} disabled={loading} />
+            <Input className='text-sm' id="owner" value={owner} onChange={(e) => setOwner(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
@@ -164,19 +164,19 @@ const ProfileForm = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={loading}
-              className="min-h-[100px]"
+              className="min-h-[150px] text-sm "
             />
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full">
+          <Button type="submit" disabled={loading} className="w-full hover:cursor-pointer">
             {loading ? "Salvando..." : "Salvar Alterações"}
           </Button>
         </form>
 
 
-        <div className="flex flex-col items-center justify-center gap-6 rounded-lg border p-6 shadow-md">
+        <div className="flex flex-col items-center justify-center gap-6 rounded-lg p-6">
           {imgUrl && (
-            <div className="relative w-64 h-64 rounded-2xl overflow-hidden border shadow-md transition-transform duration-200">
+            <div className="relative w-64 h-64 rounded-2xl overflow-hidden border transition-transform duration-200">
               <Image src={imgUrl} alt="Foto de Perfil" fill className="object-cover" />
             </div>
           )}

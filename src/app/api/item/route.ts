@@ -41,7 +41,7 @@ export const GET = async (req: NextRequest) => {
 
         if (id) {
             const item = await prisma.item.findUnique({
-                where: { id },
+                where: { id: id || undefined },
                 include: { provider: true },
             });
 
@@ -72,22 +72,23 @@ export const PUT = async (req: NextRequest) => {
     try {
         const body = await req.json();
         const auth = await authenticate(req);
+        const params = new URL(req.url).searchParams;
+        const id = params.get("id");
 
         if (!auth || typeof auth !== 'object' || !('id' in auth)) {
             return NextResponse.json({ message: "Usuário não autenticado." }, { status: 401 });
         }    
 
-
-        if (!body.id) {
-            return NextResponse.json({ message: "ID é obrigatório." }, { status: 400 });
-        }
-
         const updatedItem = await prisma.item.updateMany({
-            where: { id: body.id, providerId: auth.id },
+            where: { id: id || undefined },
             data: {
-                ...(body.name && { name: body.name }),
-                ...(body.price !== undefined && { price: body.price }),
-                ...(body.description && { description: body.description }),
+
+                    ...(body.name && { name: body.name }),
+                    ...(body.price !== undefined && { price: body.price }),
+                    ...(body.imgUrl && { imgUrl: body.imgUrl }),
+                    ...(body.category && { category: body.category }),
+                    ...(body.description && { description: body.description }),
+                  
             },
         });
 
@@ -98,6 +99,7 @@ export const PUT = async (req: NextRequest) => {
         return NextResponse.json({ message: "Item atualizado com sucesso" }, { status: 200 });
     } catch (error) {
         console.error("Erro ao atualizar item:", error);
+        console.log(error);
         return NextResponse.json({ message: "Erro ao atualizar item." }, { status: 500 });
     }
 };

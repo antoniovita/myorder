@@ -47,6 +47,8 @@ const DashboardItem = () => {
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [prevImageUrl, setPrevImageUrl] = useState("");
+
 
 const getImagePathFromUrl = (url: string) =>
   decodeURIComponent(url.split("/images/")[1] ?? "");
@@ -207,46 +209,53 @@ const getImagePathFromUrl = (url: string) =>
     setCategory(item.category);
     setDescription(item.description);
     setImageUrl(item.imgUrl);
+    setPrevImageUrl(item.imgUrl);
     setIsEditDialogOpen(true);
   };
+  
 
   const handleEditItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem || !token) return;
-
-    try {
-      const body = {
-        name,
-        price: parseFloat(price),
-        description,
-        imgUrl: imageUrl,
-        category,
-        providerId,
-      };
-
-      const res = await fetch(`/api/item?id=${editingItem.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (!res.ok) throw new Error("Erro ao atualizar o item.");
-
-      const updatedItem: Item = await res.json();
-      setItems((prev) =>
-        prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-      );
-
-      setMessage("✅ Item atualizado com sucesso!");
-      setIsEditDialogOpen(false);
-      setEditingItem(null);
-    } catch (err: any) {
-      setMessage(`❌ ${err.message || "Erro ao atualizar item."}`);
+  
+    const body = {
+      name,
+      price: parseFloat(price),
+      description,
+      imgUrl: imageUrl,
+      category,
+      providerId,
+    };
+  
+    const res = await fetch(`/api/item?id=${editingItem.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+  
+    if (!res.ok) {
+      setMessage("❌ Erro ao atualizar o item.");
+      return;
     }
+  
+    if (prevImageUrl && prevImageUrl !== imageUrl) {
+      const oldPath = getImagePathFromUrl(prevImageUrl);
+      if (oldPath) {
+        await supabase.storage.from("images").remove([oldPath]);
+      }
+    }
+  
+    const updated: Item = await res.json();
+    setItems((prev) => prev.map((it) => (it.id === updated.id ? updated : it)));
+  
+    setMessage("✅ Item atualizado com sucesso!");
+    setIsEditDialogOpen(false);
+    setEditingItem(null);
   };
+  
 
   if (!token || !providerId) {
     return (
@@ -276,7 +285,7 @@ const getImagePathFromUrl = (url: string) =>
                   <button
                     type="button"
                     onClick={() => setSearchTerm("")}
-                    className="text-gray-400 hover:text-gray-600 transition"
+                    className="text-gray-400 hover:text-gray-600 hover:cursor-pointer transition"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -336,11 +345,10 @@ const getImagePathFromUrl = (url: string) =>
         </div>
       </div>
 
-      {/* Botão Flutuante/Fixo */}
       <div className="fixed bottom-4 right-4 sm:right-6 z-50 w-full sm:w-auto sm:bottom-6 flex justify-center sm:justify-end px-4">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium p-4 rounded-full shadow-lg hover:brightness-110 transition-all flex items-center gap-2 sm:w-auto">
+            <Button className="bg-gradient-to-r hover:cursor-pointer from-blue-600 to-blue-700 text-white font-medium p-4 rounded-full shadow-lg hover:brightness-110 transition-all flex items-center gap-2 sm:w-auto">
               <Plus className="w-5 h-5" />
               Novo Produto
             </Button>
@@ -356,31 +364,46 @@ const getImagePathFromUrl = (url: string) =>
             </DialogHeader>
 
             <form className="space-y-4" onSubmit={handleCreateItem}>
-              <Input
-                placeholder="Nome do Produto"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-              <Input
-                type="number"
-                placeholder="Preço"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                required
-              />
-              <Input
-                placeholder="Categoria"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                required
-              />
-              <Textarea
-                placeholder="Descrição"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
+              <div className="flex flex-col gap-1">
+                <label className="text-sm">  Nome do produto:</label>
+                <Input
+                  placeholder="Spaghetti ao molho sugo..."
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm">  Preço:</label>
+                <Input
+                  type="number"
+                  placeholder="45.99..."
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm">  Categoria:</label>
+                <Input
+                  placeholder="Massas..."
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm">  Descrição:</label>
+                <Textarea
+                  placeholder="Deliciosa especialidade de massa da casa..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                />
+              </div>
 
               <label
                 htmlFor="upload"
@@ -414,7 +437,7 @@ const getImagePathFromUrl = (url: string) =>
 
               <Button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 shadow-sm"
+                className="w-full bg-blue-600 hover:cursor-pointer hover:bg-blue-700 shadow-sm"
                 disabled={uploading}
               >
                 Salvar
@@ -428,7 +451,7 @@ const getImagePathFromUrl = (url: string) =>
         </Dialog>
       </div>
 
-      {/* Dialog Editar */}
+
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -441,30 +464,47 @@ const getImagePathFromUrl = (url: string) =>
           </DialogHeader>
 
           <form className="space-y-4" onSubmit={handleEditItem}>
-            <Input
-              placeholder="Nome do Produto"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <Input
-              type="number"
-              placeholder="Preço"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              required
-            />
-            <Input
-              placeholder="Categoria"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            />
-            <Textarea
-              placeholder="Descrição"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
+
+          <div className="flex flex-col gap-1">
+                <label className="text-sm">  Nome do produto:</label>
+                <Input
+                  placeholder="Spaghetti ao molho sugo..."
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm">  Preço:</label>
+                <Input
+                  type="number"
+                  placeholder="45.99..."
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm">  Categoria:</label>
+                <Input
+                  placeholder="Massas..."
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-sm">  Descrição:</label>
+                <Textarea
+                  placeholder="Deliciosa especialidade de massa da casa..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  required
+                />
+              </div>
 
             <label
               htmlFor="edit-upload"
@@ -498,7 +538,7 @@ const getImagePathFromUrl = (url: string) =>
 
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 shadow-sm"
+              className="w-full bg-blue-600 hover:bg-blue-700 hover:cursor-pointer shadow-sm"
               disabled={uploading}
             >
               Atualizar
