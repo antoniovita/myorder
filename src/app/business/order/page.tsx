@@ -1,16 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-  ShoppingCart,
-  Clock,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
+import { ShoppingCart, Clock } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import {Skeleton} from '@/components/ui/skeleton'; // ajuste o path se necessário
+import { Skeleton } from '@/components/ui/skeleton';
+import Image from 'next/image';
 
-/* ---------- types ---------- */
 interface User {
   id: string;
   name: string;
@@ -32,6 +27,7 @@ interface Order {
   status: string;
   providerId: string;
   date: string;
+  orderItem: OrderItem[];
 }
 
 interface OrderItem {
@@ -40,55 +36,39 @@ interface OrderItem {
   quantity: number;
   orderId: string;
   observation: string;
+  item: Item;
 }
 
-/* ---------- helpers ---------- */
+interface Item {
+  id: string;
+  name: string;
+  price: number;
+  imgUrl: string;
+  category: string;
+  description: string;
+}
+
+
 const formatBRL = (v: number) =>
-  new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(v);
-
-const statusStyle = (s: string) => {
-  switch (s) {
-    case 'ativo':
-      return { color: 'bg-green-600', label: 'Pedido ativo' };
-    case 'finalizado':
-      return { color: 'bg-yellow-500', label: 'Pedido finalizado' };
-    case 'cancelado':
-      return { color: 'bg-red-600', label: 'Pedido cancelado' };
-    default:
-      return { color: 'bg-gray-500', label: s };
-  }
-};
-
-/* ---------- component ---------- */
-export default function OrderDashboard() {
-  const [clients, setClients] = useState<User[]>([]);
-  const [tables, setTables] = useState<Table[]>([]);
-  const [orders, setOrders] = useState<(Order & { orderItem: OrderItem[] })[]>(
-    []
+  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+    v
   );
+
+export default function OrderDashboard() {
+  const [orders, setOrders] = useState<(Order & { orderItem: (OrderItem & { item: Item })[] })[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [providerId, setProviderId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [expandedTables, setExpandedTables] = useState<string[]>([]);
 
-  const toggleExpand = (id: string) =>
-    setExpandedTables((p) =>
-      p.includes(id) ? p.filter((t) => t !== id) : [...p, id]
-    );
-
-  /* ---------- fetch auth ---------- */
   useEffect(() => {
     const loadAuth = async () => {
       try {
         const res = await fetch('/api/token', { credentials: 'include' });
         if (!res.ok) throw new Error();
         const { token: tk, id } = await res.json();
-        setToken(tk || null);
-        setProviderId(id || null);
+        setToken(tk);
+        setProviderId(id);
       } catch {
         setError('Erro ao obter credenciais');
       }
@@ -96,7 +76,6 @@ export default function OrderDashboard() {
     loadAuth();
   }, []);
 
-  /* ---------- fetch data ---------- */
   useEffect(() => {
     if (!providerId || !token) return;
     const loadData = async () => {
@@ -104,32 +83,18 @@ export default function OrderDashboard() {
         setLoading(true);
         setError('');
 
-        const [uRes, tRes, oRes] = await Promise.all([
-          fetch(`/api/user`, {
-            headers: { Authorization: `Bearer ${token}` },
-            credentials: 'include',
-          }),
-          fetch(`/api/table`, {
-            headers: { Authorization: `Bearer ${token}` },
-            credentials: 'include',
-          }),
-          fetch(`/api/order?providerId=${providerId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-            credentials: 'include',
-          }),
-        ]);
+        const res = await fetch(`/api/order?providerId=${providerId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          credentials: 'include',
+        });
+        if (!res.ok) throw new Error();
 
-        if (!uRes.ok || !tRes.ok || !oRes.ok) throw new Error();
+        const data = await res.json();
+        console.log(data);
+        const sortedOrders = data.sort((a: Order, b: Order) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-        const [uData, tData, oData] = await Promise.all([
-          uRes.json(),
-          tRes.json(),
-          oRes.json(),
-        ]);
-
-        setClients(uData);
-        setTables(tData);
-        setOrders(oData);
+        setOrders(sortedOrders);
+        console.log(sortedOrders);
       } catch {
         setError('Erro ao carregar dados');
       } finally {
@@ -150,88 +115,48 @@ export default function OrderDashboard() {
 
   if (error) return <p className="text-center text-red-600 mt-10">{error}</p>;
 
-  /* ---------- group orders by table ---------- */
-  const ordersByTable = tables.map((t) => ({
-    ...t,
-    orders: orders.filter((o) => o.tableId === t.id),
-  }));
-
   return (
-    <div className="space-y-6 p-6">
-      {ordersByTable.map((tbl) => (
-        <Card
-          key={tbl.id}
-          className="cursor-pointer transition hover:shadow-lg"
-          onClick={() => toggleExpand(tbl.id)}
-        >
-          <div className="flex items-center justify-between p-4">
-            <h2 className="text-lg font-medium">
-              Mesa {tbl.number}{' '}
-              <span className="text-sm text-gray-500 ml-1">
-                ({tbl.orders.length} pedidos)
-              </span>
-            </h2>
-            {expandedTables.includes(tbl.id) ? (
-              <ChevronUp className="w-5 h-5 text-gray-500" />
-            ) : (
-              <ChevronDown className="w-5 h-5 text-gray-500" />
-            )}
-          </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+      {orders.map((order) => (
+        <Card key={order.id} className="relative shadow-md hover:shadow-xl transition bg-[#F4ECE3] rounded-xl">
+          <CardContent className="space-y-3 p-4">
+            <h3 className="text-xl font-bold text-[#5D4037]">{order.user.name}</h3>
+            <p className="text-md text-[#8D6E63]">Mesa {order.table.number}</p>
 
-          {expandedTables.includes(tbl.id) && (
-            <CardContent className="space-y-4">
-              {tbl.orders.length ? (
-                tbl.orders.map((order) => {
-                  const { color, label } = statusStyle(order.status);
-                  return (
-                    <div
-                      key={order.id}
-                      className="border p-4 rounded-2xl bg-white shadow-sm hover:shadow-md transition space-y-4"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-blue-100 text-blue-600 p-2 rounded-full">
-                            <ShoppingCart className="w-5 h-5" />
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-base font-normal text-gray-800">
-                              {order.user.name}
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              Mesa {tbl.number}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500 mt-1">
-                          <Clock className="w-3 h-3 text-gray-400" />
-                          {new Date(order.date).toLocaleString('pt-BR', {
-                            day: '2-digit',
-                            month: 'short',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </div>
-                      </div>
+            <div className="flex flex-wrap gap-2">
+              {order.orderItem.map((item) => (
+                <Card key={item.id} className="p-2 flex flex-col items-center bg-white shadow-sm rounded-lg">
+                  <Image
+                    src={item.item.imgUrl}
+                    alt={item.item.name}
+                    width={48}
+                    height={48}
+                    className="rounded-full border-2 border-[#D7CCC8]"
+                  />
+                  <p className="text-xs text-center text-[#6D4C41] font-medium mt-1">
+                    {item.item.name}
+                  </p>
+                </Card>
+              ))}
+            </div>
 
-                      <div className="flex justify-between items-center">
-                        <div
-                          className={`flex items-center gap-1 px-2 py-[2px] rounded-full text-white text-sm ${color}`}
-                        >
-                          {label}
-                        </div>
-                        <div className="text-lg font-medium text-gray-900">
-                          {formatBRL(order.price)}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <p className="text-gray-400">Nenhum pedido nesta mesa.</p>
-              )}
-            </CardContent>
-          )}
+            <div className="flex items-center justify-between text-sm text-[#8D6E63]">
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                {new Date(order.date).toLocaleString('pt-BR', {
+                  day: '2-digit',
+                  month: 'short',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </div>
+              <ShoppingCart className="w-5 h-5" />
+            </div>
+
+            <div className="absolute bottom-3 right-4 text-lg font-bold text-[#4E342E]">
+              {formatBRL(order.price)}
+            </div>
+          </CardContent>
         </Card>
       ))}
     </div>
