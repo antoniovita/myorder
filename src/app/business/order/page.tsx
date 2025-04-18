@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ShoppingCart, Clock } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Clock, ShoppingCart, Trash2 } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import Image from 'next/image';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 interface User {
   id: string;
@@ -48,18 +49,29 @@ interface Item {
   description: string;
 }
 
+const statusStyle = (status: string) => {
+  switch (status) {
+    case 'ativo':
+      return 'bg-green-600 text-white';
+    case 'finalizado':
+      return 'bg-yellow-500 text-white';
+    case 'cancelado':
+      return 'bg-red-600 text-white';
+    default:
+      return 'bg-gray-500 text-white';
+  }
+};
 
 const formatBRL = (v: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-    v
-  );
+  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
 export default function OrderDashboard() {
-  const [orders, setOrders] = useState<(Order & { orderItem: (OrderItem & { item: Item })[] })[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [providerId, setProviderId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const loadAuth = async () => {
@@ -90,11 +102,9 @@ export default function OrderDashboard() {
         if (!res.ok) throw new Error();
 
         const data = await res.json();
-        console.log(data);
         const sortedOrders = data.sort((a: Order, b: Order) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         setOrders(sortedOrders);
-        console.log(sortedOrders);
       } catch {
         setError('Erro ao carregar dados');
       } finally {
@@ -103,6 +113,22 @@ export default function OrderDashboard() {
     };
     loadData();
   }, [providerId, token]);
+
+  const handleDeleteOrder = async () => {
+    if (!token || !orderToDelete) return;
+    try {
+      const res = await fetch(`/api/order?id=${orderToDelete}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error('Erro ao cancelar pedido');
+      setOrders((prev) => prev.filter((order) => order.id !== orderToDelete));
+      setOrderToDelete(null);
+    } catch (error) {
+      setError('Erro ao cancelar pedido');
+    }
+  };
 
   if (loading)
     return (
@@ -116,49 +142,63 @@ export default function OrderDashboard() {
   if (error) return <p className="text-center text-red-600 mt-10">{error}</p>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
       {orders.map((order) => (
-        <Card key={order.id} className="relative shadow-md hover:shadow-xl transition bg-[#F4ECE3] rounded-xl">
-          <CardContent className="space-y-3 p-4">
-            <h3 className="text-xl font-bold text-[#5D4037]">{order.user.name}</h3>
-            <p className="text-md text-[#8D6E63]">Mesa {order.table.number}</p>
-
-            <div className="flex flex-wrap gap-2">
-              {order.orderItem.map((item) => (
-                <Card key={item.id} className="p-2 flex flex-col items-center bg-white shadow-sm rounded-lg">
-                  <Image
-                    src={item.item.imgUrl}
-                    alt={item.item.name}
-                    width={48}
-                    height={48}
-                    className="rounded-full border-2 border-[#D7CCC8]"
-                  />
-                  <p className="text-xs text-center text-[#6D4C41] font-medium mt-1">
-                    {item.item.name}
-                  </p>
-                </Card>
-              ))}
-            </div>
-
-            <div className="flex items-center justify-between text-sm text-[#8D6E63]">
-              <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                {new Date(order.date).toLocaleString('pt-BR', {
-                  day: '2-digit',
-                  month: 'short',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
+        <Dialog key={order.id}>
+          <DialogTrigger asChild>
+            <Card className="bg-white shadow rounded-lg p-4 cursor-pointer transition relative">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <ShoppingCart className="w-5 h-5 text-blue-500" />
+                  <div>
+                    <h3 className="text-lg font-semibold">{order.user.name}</h3>
+                    <p className="text-sm text-gray-500">Mesa {order.table.number}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setOrderToDelete(order.id); }}
+                  className="text-red-500 hover:text-red-700 transition"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
               </div>
-              <ShoppingCart className="w-5 h-5" />
-            </div>
 
-            <div className="absolute bottom-3 right-4 text-lg font-bold text-[#4E342E]">
-              {formatBRL(order.price)}
-            </div>
-          </CardContent>
-        </Card>
+              <div className="flex justify-between items-center mt-3">
+                <span className={`px-2 py-1 rounded-full text-xs ${statusStyle(order.status)}`}>Pedido {order.status}</span>
+                <span className="text-lg font-medium">{formatBRL(order.price)}</span>
+              </div>
+            </Card>
+          </DialogTrigger>
+
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Detalhes do Pedido</DialogTitle>
+              <DialogDescription>
+                <strong>{order.user.name}</strong> - Mesa {order.table.number}
+              </DialogDescription>
+            </DialogHeader>
+            {order.orderItem.map((item) => (
+              <div key={item.id} className="border-b py-2">
+                <p className="font-semibold">{item.item.name} (x{item.quantity})</p>
+                <p className="text-sm text-gray-600">Observação: {item.observation || 'Nenhuma'}</p>
+              </div>
+            ))}
+          </DialogContent>
+        </Dialog>
       ))}
+
+      <Dialog open={!!orderToDelete} onOpenChange={() => setOrderToDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmação</DialogTitle>
+            <DialogDescription>Tem certeza que deseja cancelar este pedido?</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button className='hover:cursor-pointer' variant="secondary" onClick={() => setOrderToDelete(null)}>Não</Button>
+            <Button variant="destructive" className='hover:cursor-pointer' onClick={handleDeleteOrder}>Sim, cancelar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

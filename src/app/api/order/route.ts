@@ -101,3 +101,17 @@ export const PUT = async (req: NextRequest) => {
         return NextResponse.json({ message: "Erro ao atualizar pedido." }, { status: 500 });
     }
 };
+
+
+export const DELETE = async (req: NextRequest) => {
+    const params = new URL(req.url).searchParams;
+    const id = params.get("id");
+    if (!id) return NextResponse.json({ message: "ID é obrigatório." }, { status: 400 });
+
+    const order = await prisma.order.findUnique({ where: { id } });
+    if (!order) return NextResponse.json({ message: "Pedido não encontrado." }, { status: 404 });
+
+    const orderDelete = await prisma.order.delete({ where: { id } });
+    if (!orderDelete) return NextResponse.json({ message: "Erro ao cancelar pedido." }, { status: 500 });
+    return NextResponse.json({ message: "Pedido cancelado com sucesso!" }, { status: 200 });
+};

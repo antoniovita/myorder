@@ -1,16 +1,20 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
-  ChevronDown,
-  ChevronUp,
-  LayoutGrid,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   User,
   Loader2,
   Plus,
   Trash2,
   Paintbrush,
-  X,
-  Check,
   Search,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -47,20 +51,22 @@ interface Order {
 const DashboardTable = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [filteredTables, setFilteredTables] = useState<Table[]>([]);
-  const [expandedTable, setExpandedTable] = useState<string | null>(null);
+  const [expandedTables, setExpandedTables] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [providerId, setProviderId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [expandedUsers, setExpandedUsers] = useState<string[]>([]);
   const [creating, setCreating] = useState(false);
+  const [cleaningTableId, setCleaningTableId] = useState<string | null>(null);
   const [tableNumber, setTableNumber] = useState("");
   const [createError, setCreateError] = useState("");
   const [deletePopupId, setDeletePopupId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const toggleUsers = (id: string) => {
-    setExpandedUsers((prev) =>
+  const isExpanded = (id: string) => expandedTables.includes(id);
+
+  const toggleExpand = (id: string) => {
+    setExpandedTables((prev) =>
       prev.includes(id) ? prev.filter((tid) => tid !== id) : [...prev, id]
     );
   };
@@ -89,7 +95,10 @@ const DashboardTable = () => {
       });
       if (!res.ok) throw new Error("Erro ao carregar mesas.");
       const data = await res.json();
-      setTables(data.sort((a: Table, b: Table) => a.number - b.number));
+      const sortedTables = data.sort((a: Table, b: Table) => a.number - b.number);
+      setTables(sortedTables);
+      setFilteredTables(sortedTables);
+      console.log(sortedTables)
     } catch (err) {
       setError("Erro ao buscar mesas. Verifique a conexão.");
     } finally {
@@ -137,7 +146,9 @@ const DashboardTable = () => {
         throw new Error(errorData.message || "Erro ao criar mesa.");
       }
       const newTable = await res.json();
-      setTables((prev) => [...prev, newTable.table]);
+      const updatedTables = [...tables, newTable.table].sort((a, b) => a.number - b.number);
+      setTables(updatedTables);
+      setFilteredTables(updatedTables);
       setTableNumber("");
     } catch (error) {
       setCreateError(error instanceof Error ? error.message : "Erro inesperado");
@@ -152,7 +163,7 @@ const DashboardTable = () => {
       return;
     }
 
-    setCreating(true);
+    setCleaningTableId(tableId);
     setCreateError("");
     try {
       const res = await fetch(`/api/adm`, {
@@ -177,28 +188,25 @@ const DashboardTable = () => {
     } catch (error) {
       setCreateError(error instanceof Error ? error.message : "Erro inesperado");
     } finally {
-      setCreating(false);
+      setCleaningTableId(null);
     }
   };
 
   const handleDeleteTable = async (tableId: string) => {
     if (!token) return;
-
     try {
       const res = await fetch(`/api/table?id=${tableId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
         credentials: "include",
       });
-      setTables((prev) => prev.filter((table) => table.id !== tableId));
+      const updated = tables.filter((table) => table.id !== tableId);
+      setTables(updated);
+      setFilteredTables(updated);
       setDeletePopupId(null);
     } catch (err) {
       alert("Erro ao apagar mesa.");
     }
-  };
-
-  const toggleExpand = (id: string) => {
-    setExpandedTable((prev) => (prev === id ? null : id));
   };
 
   useEffect(() => {
@@ -206,7 +214,9 @@ const DashboardTable = () => {
   }, []);
 
   useEffect(() => {
-    fetchTables();
+    if (providerId && token) {
+      fetchTables();
+    }
   }, [providerId, token]);
 
   useEffect(() => {
@@ -216,142 +226,177 @@ const DashboardTable = () => {
   if (loading) return <div className="text-center mt-10 text-black">Carregando...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
-  return !token || !providerId ? (
-    <div className="flex items-center justify-center h-screen">
-      <p className="text-lg font-bold text-red-600">
-        Você precisa estar logado.
-      </p>
-    </div>
-  ) : (
+  if (!token || !providerId) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-lg font-bold text-red-600">
+          Você precisa estar logado.
+        </p>
+      </div>
+    );
+  }
+
+  return (
     <div className="min-h-screen bg-gray-50 px-4 flex justify-center items-start">
       <div className="w-full space-y-3">
-        
-        <div className="sm:flex sm:justify-center sm:items-center">
-        <div className="flex flex-col sm:flex-row items-start max-w-2xl justify-center rounded-3xl sm:items-center gap-3 mb-4 bg-white p-4 shadow-sm border border-gray-200">
+        <Dialog open={!!deletePopupId} onOpenChange={() => setDeletePopupId(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirmar exclusão</DialogTitle>
+              <DialogDescription>Deseja mesmo excluir esta mesa?</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="secondary" onClick={() => setDeletePopupId(null)}>Cancelar</Button>
+              <Button variant="destructive" onClick={() => deletePopupId && handleDeleteTable(deletePopupId)}>Confirmar</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <div className="relative w-full sm:w-auto">
+        <div className="sm:flex sm:justify-center sm:items-center">
+          <div className="flex flex-col sm:flex-row items-start max-w-2xl justify-center rounded-3xl sm:items-center gap-3 mb-4 bg-white p-4 shadow-sm border border-gray-200">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <div className="relative w-full sm:w-auto">
+                <input
+                  type="number"
+                  className="rounded-2xl border px-3 py-2 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full pl-10"
+                  placeholder="Pesquisar número da mesa"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
+              </div>
+
               <input
                 type="number"
-                className="rounded-2xl border px-3 py-2 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full pl-10"
-                placeholder="Pesquisar número da mesa"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                className="rounded-2xl border px-3 py-2 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
+                placeholder="Número da mesa"
+                value={tableNumber}
+                onChange={(e) => setTableNumber(e.target.value)}
               />
-              <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
+              <button
+                className="bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center justify-center gap-1 hover:bg-blue-700"
+                onClick={handleCreateTable}
+                disabled={creating}
+              >
+                {creating ? <Loader2 className="animate-spin w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                Nova Mesa
+              </button>
             </div>
-
-            <input
-              type="number"
-              className="rounded-2xl border px-3 py-2 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
-              placeholder="Número da mesa"
-              value={tableNumber}
-              onChange={(e) => setTableNumber(e.target.value)}
-            />
-            <button
-              className="bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center justify-center gap-1 hover:bg-blue-700"
-              onClick={handleCreateTable}
-              disabled={creating}
-            >
-              {creating ? <Loader2 className="animate-spin w-4 h-4" /> : <Plus className="w-4 h-4" />}
-              Nova Mesa
-            </button>
           </div>
-        </div>
         </div>
 
         {createError && <p className="text-red-500 px-4 text-sm">{createError}</p>}
 
-        {/* Lista de mesas em flex-col */}
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        {filteredTables.length > 0 ? (
-            filteredTables.map((table) => {
-              const hasOrders = table.order && table.order.length > 0;
-              const latestOrder = hasOrders && table.order[table.order.length - 1];
-              return (
-                <div key={table.id} className="relative">
-                  <div
-                    className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col justify-between ${hasOrders ? "cursor-pointer hover:shadow-md transition-shadow" : ""}`}
-                  >
-                    <div
-                      onClick={() => toggleUsers(table.id)}
-                      className="flex flex-row justify-between items-start gap-3"
-                    >
-                      <div>
-                        <h2 className="font-semibold text-gray-800">Mesa {table.number}</h2>
-                        <p className="text-sm text-gray-500">{table.user?.length || 0} cliente(s)</p>
-                      </div>
-                      <div className="flex gap-2 mt-4">
-                        <button
-                          className="text-red-600 hover:text-red-800"
-                          onClick={() => setDeletePopupId(table.id)}
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                        <button
-                          className="text-blue-600 hover:text-blue-800"
-                          onClick={() => handleCleanTable(table.id)}
-                        >
-                          <Paintbrush className="w-5 h-5" />
-                        </button>
-                      </div>
+          {filteredTables.length > 0 ? (
+            filteredTables.map((table) => (
+              <div key={table.id} className="relative">
+                <div
+                  onClick={() => toggleExpand(table.id)}
+                  className={`bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col justify-between cursor-pointer hover:shadow-md transition-shadow`}
+                >
+                  <div className="flex flex-row justify-between items-start gap-3">
+                    <div>
+                      <h2 className="font-semibold text-gray-800">Mesa {table.number}</h2>
+                      <p className="text-sm text-gray-500">{table.user?.length || 0} cliente(s)</p>
                     </div>
-
-                    {hasOrders && expandedTable === table.id && (
-                      <div className="mt-4 text-sm text-gray-700 space-y-2 border-t pt-2">
-                        {latestOrder && (
-                          <>
-                            <p><strong>ID do pedido:</strong> {latestOrder.id}</p>
-                            <p><strong>Data:</strong> {new Date(latestOrder.date).toLocaleString()}</p>
-                            <p><strong>Total:</strong> R$ {latestOrder.price}</p>
-                            <p><strong>Status:</strong> {latestOrder.status}</p>
-                          </>
+                    <div className="flex gap-2 mt-4">
+                      <button
+                        className="text-red-600 hover:text-red-800"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeletePopupId(table.id);
+                        }}
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                      <button
+                        className="text-blue-600 hover:text-blue-800"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCleanTable(table.id);
+                        }}
+                      >
+                        {cleaningTableId === table.id ? (
+                          <Loader2 className="animate-spin w-5 h-5" />
+                        ) : (
+                          <Paintbrush className="w-5 h-5" />
                         )}
-                        <p><strong>Clientes:</strong> {table.user.map((u) => u.name).join(", ")}</p>
-                      </div>
-                    )}
-
-                    {expandedUsers.includes(table.id) && (
-                      <ul className="mt-2 space-y-1 flex flex-col list-inside text-sm text-gray-800">
-                        {table.user.map((user) => (
-                          <li
-                            key={user.id}
-                            className="flex items-center gap-3 px-4 py-2 border border-gray-300 bg-gray-50 rounded-2xl shadow-sm hover:shadow-md transition-shadow"
-                          >
-                            <div className="bg-blue-100 text-blue-600 p-2 rounded-full">
-                              <User className="w-5 h-5" />
-                            </div>
-                            <h1 className="text-sm font-medium text-gray-800">{user.name}</h1>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                      </button>
+                    </div>
                   </div>
 
-                  {deletePopupId === table.id && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white rounded-2xl">
-                      <div className="bg-white p-6 rounded-xl shadow-xl border w-full max-w-xs text-center">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-4">Deseja mesmo excluir a mesa {table.number}?</h2>
-                        <div className="flex justify-center gap-4">
-                          <button
-                            onClick={() => setDeletePopupId(null)}
-                            className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-gray-300"
-                          >
-                            <X className="w-4 h-4" /> Cancelar
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTable(table.id)}
-                            className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-1 hover:bg-red-700"
-                          >
-                            <Check className="w-4 h-4" /> Confirmar
-                          </button>
-                        </div>
+                  {isExpanded(table.id) && (
+                    <div className="mt-4 space-y-3 text-sm text-gray-700 border-t pt-3">
+                      <div>
+                        {table.user.length > 0 ? (
+                          <ul className="space-y-1">
+                            {table.user.map((user) => (
+                              <li key={user.id} className="flex items-center gap-2">
+                                <div className=" bg-blue-100 p-1 rounded-full"><User className="w-4 h-4 text-blue-500" /></div>
+                                
+                                {user.name}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-gray-500">Nenhum cliente.</p>
+                        )}
+                      </div>
+
+                      <div className="border-t pt-3">
+                        <ul className="space-y-3">
+                        {table.order.length > 0 ? (
+                          <ul className="space-y-3">
+                            {table.order.map((order) => (
+                              <li
+                                key={order.id}
+                                className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm"
+                              >
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-sm text-gray-500">
+                                    {new Date(order.date).toLocaleString("pt-BR", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}
+                                  </span>
+                                  <span
+                                    className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                                      order.status === "ativo"
+                                        ? "bg-green-100 text-green-700"
+                                        : "bg-yellow-400 text-white"
+                                    }`}
+                                  >
+                                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                                  </span>
+                                </div>
+
+                                <div className="text-gray-700 text-sm">
+                                  <p>
+                                    <span className="font-medium">Total:</span>{" "}
+                                    <span className="text-blue-600 font-semibold">
+                                      R$ {order.price.toFixed(2)}
+                                    </span>
+                                  </p>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-gray-500">Nenhum pedido.</p>
+                        )}
+
+                        </ul>
+
                       </div>
                     </div>
                   )}
                 </div>
-              );
-            })
+              </div>
+            ))
           ) : (
             <p className="text-sm text-gray-500">Nenhuma mesa encontrada.</p>
           )}

@@ -146,7 +146,7 @@ const BusinessPage = () => {
     }).format(v);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
+    <div className="flex-col flex gap-6 px-4">
       <Card>
         
         <CardContent className="space-y-2">
@@ -238,7 +238,7 @@ const BusinessPage = () => {
         return (
           <div
             key={order.id}
-            className="border p-4 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow space-y-4"
+            className="border p-4 rounded-2xl bg-white hover transitionace-y-4"
           >
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-3">
