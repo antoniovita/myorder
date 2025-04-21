@@ -4,7 +4,15 @@ import { useEffect, useState } from 'react';
 import { Clock, ShoppingCart, Trash2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
 interface User {
@@ -69,9 +77,12 @@ export default function OrderDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [providerId, setProviderId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   useEffect(() => {
     const loadAuth = async () => {
@@ -83,6 +94,7 @@ export default function OrderDashboard() {
         setProviderId(id);
       } catch {
         setError('Erro ao obter credenciais');
+        setShowErrorDialog(true);
       }
     };
     loadAuth();
@@ -106,7 +118,8 @@ export default function OrderDashboard() {
 
         setOrders(sortedOrders);
       } catch {
-        setError('Erro ao carregar dados');
+        setError('Erro ao carregar pedidos');
+        setShowErrorDialog(true);
       } finally {
         setLoading(false);
       }
@@ -124,9 +137,12 @@ export default function OrderDashboard() {
       });
       if (!res.ok) throw new Error('Erro ao cancelar pedido');
       setOrders((prev) => prev.filter((order) => order.id !== orderToDelete));
+      setSuccessMessage('Pedido cancelado com sucesso');
+      setShowSuccessDialog(true);
       setOrderToDelete(null);
     } catch (error) {
       setError('Erro ao cancelar pedido');
+      setShowErrorDialog(true);
     }
   };
 
@@ -139,54 +155,68 @@ export default function OrderDashboard() {
       </div>
     );
 
-  if (error) return <p className="text-center text-red-600 mt-10">{error}</p>;
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-      {orders.map((order) => (
-        <Dialog key={order.id}>
-          <DialogTrigger asChild>
-            <Card className="bg-white shadow rounded-lg p-4 cursor-pointer transition relative">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                  <ShoppingCart className="w-5 h-5 text-blue-500" />
-                  <div>
-                    <h3 className="text-lg font-semibold">{order.user.name}</h3>
-                    <p className="text-sm text-gray-500">Mesa {order.table.number}</p>
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        {orders.length === 0 ? (
+          <p className="text-center col-span-full text-gray-500 mt-10">Nenhum pedido encontrado.</p>
+        ) : (
+          orders.map((order) => (
+            <Dialog key={order.id}>
+              <DialogTrigger asChild>
+                <Card className="bg-white shadow rounded-lg p-4 cursor-pointer transition relative">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <ShoppingCart className="w-5 h-5 text-blue-500" />
+                      <div>
+                        <h3 className="text-lg font-semibold">{order.user.name}</h3>
+                        <p className="text-sm text-gray-500">Mesa {order.table.number}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOrderToDelete(order.id);
+                      }}
+                      className="text-red-500 hover:text-red-700 transition"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </button>
                   </div>
-                </div>
-                <button
-                  onClick={(e) => { e.stopPropagation(); setOrderToDelete(order.id); }}
-                  className="text-red-500 hover:text-red-700 transition"
-                >
-                  <Trash2 className="h-5 w-5" />
-                </button>
-              </div>
 
-              <div className="flex justify-between items-center mt-3">
-                <span className={`px-2 py-1 rounded-full text-xs ${statusStyle(order.status)}`}>Pedido {order.status}</span>
-                <span className="text-lg font-medium">{formatBRL(order.price)}</span>
-              </div>
-            </Card>
-          </DialogTrigger>
+                  <div className="flex justify-between items-center mt-3">
+                    <span className={`px-2 py-1 rounded-full text-xs ${statusStyle(order.status)}`}>
+                      Pedido {order.status}
+                    </span>
+                    <span className="text-lg font-medium">{formatBRL(order.price)}</span>
+                  </div>
+                </Card>
+              </DialogTrigger>
 
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Detalhes do Pedido</DialogTitle>
-              <DialogDescription>
-                <strong>{order.user.name}</strong> - Mesa {order.table.number}
-              </DialogDescription>
-            </DialogHeader>
-            {order.orderItem.map((item) => (
-              <div key={item.id} className="border-b py-2">
-                <p className="font-semibold">{item.item.name} (x{item.quantity})</p>
-                <p className="text-sm text-gray-600">Observação: {item.observation || 'Nenhuma'}</p>
-              </div>
-            ))}
-          </DialogContent>
-        </Dialog>
-      ))}
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Detalhes do Pedido</DialogTitle>
+                  <DialogDescription>
+                    <strong>{order.user.name}</strong> - Mesa {order.table.number}
+                  </DialogDescription>
+                </DialogHeader>
+                {order.orderItem.map((item) => (
+                  <div key={item.id} className="border-b py-2">
+                    <p className="font-semibold">
+                      {item.item.name} (x{item.quantity})
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Observação: {item.observation || 'Nenhuma'}
+                    </p>
+                  </div>
+                ))}
+              </DialogContent>
+            </Dialog>
+          ))
+        )}
+      </div>
 
+      {/* Confirm Delete Dialog */}
       <Dialog open={!!orderToDelete} onOpenChange={() => setOrderToDelete(null)}>
         <DialogContent>
           <DialogHeader>
@@ -194,11 +224,41 @@ export default function OrderDashboard() {
             <DialogDescription>Tem certeza que deseja cancelar este pedido?</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button className='hover:cursor-pointer' variant="secondary" onClick={() => setOrderToDelete(null)}>Não</Button>
-            <Button variant="destructive" className='hover:cursor-pointer' onClick={handleDeleteOrder}>Sim, cancelar</Button>
+            <Button variant="secondary" onClick={() => setOrderToDelete(null)}>
+              Não
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteOrder}>
+              Sim, cancelar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+
+      {/* Error Dialog */}
+      <Dialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Erro</DialogTitle>
+            <DialogDescription>{error}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setShowErrorDialog(false)}>Fechar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sucesso</DialogTitle>
+            <DialogDescription>{successMessage}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setShowSuccessDialog(false)}>Fechar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

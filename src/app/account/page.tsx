@@ -51,7 +51,7 @@ const AccountPage = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-blue-800 text-gray-800">
+    <div className="flex min-h-screen bg-blue-100 text-gray-800">
 
       <aside className="w-16 md:w-72 md:mt-17 bg-gray-50 border-r p-4 md:p-6 py-20 transition-all duration-300 flex flex-col items-center md:items-start">
         <div className="space-y-1 w-full">

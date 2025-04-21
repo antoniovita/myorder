@@ -8,6 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 import { UploadCloud, CheckCircle, AlertCircle, Info } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+
 
 const ProfileForm = () => {
   const [error, setError] = useState("");
@@ -19,6 +27,8 @@ const ProfileForm = () => {
   const [cpf, setCpf] = useState("");
   const [phone, setPhone] = useState("");
   const [owner, setOwner] = useState("");
+  const [cnpj, setCnpj] = useState("");
+  const [address, setAddress] = useState("");
   const [token, setToken] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
@@ -52,6 +62,8 @@ const ProfileForm = () => {
         setCpf(providerData.cpf || "");
         setPhone(providerData.phone || "");
         setOwner(providerData.owner || "");
+        setCnpj(providerData.cnpj || "");
+        setAddress(providerData.address || "");
       } catch (err: any) {
         setError(err.message || "Erro ao buscar dados.");
       }
@@ -76,7 +88,17 @@ const ProfileForm = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name, description, imgUrl, cpf, phone, owner, id: providerId }),
+        body: JSON.stringify({
+          id: providerId,
+          name,
+          description,
+          imgUrl,
+          cpf,
+          phone,
+          owner,
+          cnpj,
+          address,
+        }),
       });
 
       if (!response.ok) {
@@ -118,43 +140,77 @@ const ProfileForm = () => {
     <div className="w-full p-6 mt-5 bg-white border border-t border-gray-200 rounded-lg shadow-md space-y-6">
       <h1 className="text-3xl font-bold">Meu Restaurante</h1>
 
-      {error && (
-        <div className="flex items-center gap-2 text-red-600">
-          <AlertCircle size={20} /> <span>{error}</span>
-        </div>
-      )}
-      {success && (
-        <div className="flex items-center gap-2 text-green-600">
-          <CheckCircle size={20} /> <span>{success}</span>
-        </div>
-      )}
-      {message && (
-        <div className="flex items-center gap-2 text-blue-600">
-          <Info size={20} /> <span>{message}</span>
-        </div>
-      )}
+      <Dialog open={!!error} onOpenChange={() => setError("")}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-red-600 flex items-center gap-2">
+              <AlertCircle size={20} /> Erro
+            </DialogTitle>
+            <DialogDescription className="text-gray-700">
+              {error}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!success} onOpenChange={() => setSuccess("")}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-green-600 flex items-center gap-2">
+              <CheckCircle size={20} /> Sucesso
+            </DialogTitle>
+            <DialogDescription className="text-gray-700">
+              {success}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!message} onOpenChange={() => setMessage("")}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-blue-600 flex items-center gap-2">
+              <Info size={20} /> Informação
+            </DialogTitle>
+            <DialogDescription className="text-gray-700">
+              {message}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* Formulário */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="name">Nome</Label>
-            <Input  className='text-sm' id="name" value={name} onChange={(e) => setName(e.target.value)} disabled={loading} />
+            <Input className="text-sm" id="name" value={name} onChange={(e) => setName(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="cpf">CPF</Label>
-            <Input  className='text-sm' id="cpf" value={cpf} onChange={(e) => setCpf(e.target.value)} disabled={loading} />
+            <Input className="text-sm" id="cpf" value={cpf} onChange={(e) => setCpf(e.target.value)} disabled={loading} />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
+            <Label htmlFor="cnpj">CNPJ</Label>
+            <Input className="text-sm" id="cnpj" value={cnpj} onChange={(e) => setCnpj(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="phone">Número</Label>
-            <Input className='text-sm' id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} />
+            <Input className="text-sm" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="owner">Responsável</Label>
-            <Input className='text-sm' id="owner" value={owner} onChange={(e) => setOwner(e.target.value)} disabled={loading} />
+            <Input className="text-sm" id="owner" value={owner} onChange={(e) => setOwner(e.target.value)} disabled={loading} />
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
+            <Label htmlFor="address">Endereço</Label>
+            <Input className="text-sm" id="address" value={address} onChange={(e) => setAddress(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
@@ -164,7 +220,7 @@ const ProfileForm = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={loading}
-              className="min-h-[150px] text-sm "
+              className="min-h-[150px] text-sm"
             />
           </div>
 
@@ -172,7 +228,6 @@ const ProfileForm = () => {
             {loading ? "Salvando..." : "Salvar Alterações"}
           </Button>
         </form>
-
 
         <div className="flex flex-col items-center justify-center gap-6 rounded-lg p-6">
           {imgUrl && (

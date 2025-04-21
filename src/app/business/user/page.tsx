@@ -144,13 +144,15 @@ const DashboardUser = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
+          <div className="flex items-center border border-gray-300 rounded-xl px-3 w-full md:w-1/2">
           <Input
             type="number"
             placeholder="Filtrar por mesa"
-            className="w-full md:w-1/2"
+            className="w-full md:w-1/2 border-none"
             value={tableFilter}
             onChange={(e) => setTableFilter(e.target.value)}
           />
+          </div>
         </CardContent>
       </Card>
 

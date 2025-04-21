@@ -16,6 +16,9 @@ import {
   Trash2,
   Paintbrush,
   Search,
+  AlertCircle,
+  Info,
+  CheckCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -54,17 +57,17 @@ const DashboardTable = () => {
   const [expandedTables, setExpandedTables] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [message, setMessage] = useState("");
   const [providerId, setProviderId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [cleaningTableId, setCleaningTableId] = useState<string | null>(null);
   const [tableNumber, setTableNumber] = useState("");
-  const [createError, setCreateError] = useState("");
   const [deletePopupId, setDeletePopupId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   const isExpanded = (id: string) => expandedTables.includes(id);
-
   const toggleExpand = (id: string) => {
     setExpandedTables((prev) =>
       prev.includes(id) ? prev.filter((tid) => tid !== id) : [...prev, id]
@@ -88,7 +91,6 @@ const DashboardTable = () => {
     if (!providerId || !token) return;
     try {
       setLoading(true);
-      setError("");
       const res = await fetch(`/api/table`, {
         headers: { Authorization: `Bearer ${token}` },
         credentials: "include",
@@ -98,7 +100,6 @@ const DashboardTable = () => {
       const sortedTables = data.sort((a: Table, b: Table) => a.number - b.number);
       setTables(sortedTables);
       setFilteredTables(sortedTables);
-      console.log(sortedTables)
     } catch (err) {
       setError("Erro ao buscar mesas. Verifique a conexão.");
     } finally {
@@ -107,28 +108,21 @@ const DashboardTable = () => {
   };
 
   const filterTables = (query: string) => {
-    if (!query) {
-      setFilteredTables(tables);
-    } else {
-      setFilteredTables(
-        tables.filter((table) =>
-          table.number.toString().includes(query)
-        )
-      );
-    }
+    setFilteredTables(
+      query ? tables.filter((t) => t.number.toString().includes(query)) : tables
+    );
+  };
+
+  const showTemporaryMessage = (setter: (val: string) => void, value: string) => {
+    setter(value);
+    setTimeout(() => setter(""), 3000);
   };
 
   const handleCreateTable = async () => {
-    if (!tableNumber) {
-      setCreateError("Número da mesa obrigatório.");
-      return;
-    }
-    if (!token || !providerId) {
-      setCreateError("Credenciais inválidas.");
-      return;
-    }
+    if (!tableNumber) return showTemporaryMessage(setError, "Número da mesa obrigatório.");
+    if (!token || !providerId) return showTemporaryMessage(setError, "Credenciais inválidas.");
+
     setCreating(true);
-    setCreateError("");
     try {
       const res = await fetch("/api/table", {
         method: "POST",
@@ -141,30 +135,25 @@ const DashboardTable = () => {
           providerId,
         }),
       });
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Erro ao criar mesa.");
-      }
+      if (!res.ok) throw new Error((await res.json()).message || "Erro ao criar mesa.");
+
       const newTable = await res.json();
-      const updatedTables = [...tables, newTable.table].sort((a, b) => a.number - b.number);
-      setTables(updatedTables);
-      setFilteredTables(updatedTables);
+      const updated = [...tables, newTable.table].sort((a, b) => a.number - b.number);
+      setTables(updated);
+      setFilteredTables(updated);
       setTableNumber("");
-    } catch (error) {
-      setCreateError(error instanceof Error ? error.message : "Erro inesperado");
+      showTemporaryMessage(setSuccess, "Mesa criada com sucesso!");
+    } catch (error: any) {
+      showTemporaryMessage(setError, error.message || "Erro inesperado ao criar mesa.");
     } finally {
       setCreating(false);
     }
   };
 
   const handleCleanTable = async (tableId: string) => {
-    if (!token || !providerId) {
-      setCreateError("Credenciais inválidas.");
-      return;
-    }
+    if (!token || !providerId) return showTemporaryMessage(setError, "Credenciais inválidas.");
 
     setCleaningTableId(tableId);
-    setCreateError("");
     try {
       const res = await fetch(`/api/adm`, {
         method: "DELETE",
@@ -174,19 +163,16 @@ const DashboardTable = () => {
         },
         body: JSON.stringify({ tableId }),
       });
+      if (!res.ok) throw new Error((await res.json()).message || "Erro ao limpar mesa.");
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Erro ao limpar mesa.");
-      }
-
-      setTables((prevTables) =>
-        prevTables.map((table) =>
+      setTables((prev) =>
+        prev.map((table) =>
           table.id === tableId ? { ...table, user: [], order: [] } : table
         )
       );
-    } catch (error) {
-      setCreateError(error instanceof Error ? error.message : "Erro inesperado");
+      showTemporaryMessage(setSuccess, "Mesa limpa com sucesso!");
+    } catch (error: any) {
+      showTemporaryMessage(setError, error.message || "Erro inesperado ao limpar mesa.");
     } finally {
       setCleaningTableId(null);
     }
@@ -200,12 +186,14 @@ const DashboardTable = () => {
         headers: { Authorization: `Bearer ${token}` },
         credentials: "include",
       });
-      const updated = tables.filter((table) => table.id !== tableId);
+      if (!res.ok) throw new Error("Erro ao deletar mesa.");
+      const updated = tables.filter((t) => t.id !== tableId);
       setTables(updated);
       setFilteredTables(updated);
+      showTemporaryMessage(setSuccess, "Mesa excluída com sucesso!");
       setDeletePopupId(null);
     } catch (err) {
-      alert("Erro ao apagar mesa.");
+      showTemporaryMessage(setError, "Erro ao apagar mesa.");
     }
   };
 
@@ -214,30 +202,20 @@ const DashboardTable = () => {
   }, []);
 
   useEffect(() => {
-    if (providerId && token) {
-      fetchTables();
-    }
+    if (providerId && token) fetchTables();
   }, [providerId, token]);
 
   useEffect(() => {
     filterTables(searchQuery);
   }, [searchQuery, tables]);
 
-  if (loading) return <div className="text-center mt-10 text-black">Carregando...</div>;
-  if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
-
-  if (!token || !providerId) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-lg font-bold text-red-600">
-          Você precisa estar logado.
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50 px-4 flex justify-center items-start">
+    <>
+      <Dialog open={!!error} onOpenChange={() => setError("")}> <DialogContent><DialogHeader><DialogTitle className="text-red-600 flex items-center gap-2"><AlertCircle className="w-5 h-5" /> Erro</DialogTitle><DialogDescription>{error}</DialogDescription></DialogHeader></DialogContent></Dialog>
+      <Dialog open={!!message} onOpenChange={() => setMessage("")}> <DialogContent><DialogHeader><DialogTitle className="text-blue-600 flex items-center gap-2"><Info className="w-5 h-5" /> Informação</DialogTitle><DialogDescription>{message}</DialogDescription></DialogHeader></DialogContent></Dialog>
+      <Dialog open={!!success} onOpenChange={() => setSuccess("")}> <DialogContent><DialogHeader><DialogTitle className="text-green-600 flex items-center gap-2"><CheckCircle className="w-5 h-5" /> Sucesso</DialogTitle><DialogDescription>{success}</DialogDescription></DialogHeader></DialogContent></Dialog>
+
+      <div className="min-h-screen bg-gray-50 px-4 flex justify-center items-start">
       <div className="w-full space-y-3">
         <Dialog open={!!deletePopupId} onOpenChange={() => setDeletePopupId(null)}>
           <DialogContent>
@@ -284,8 +262,6 @@ const DashboardTable = () => {
             </div>
           </div>
         </div>
-
-        {createError && <p className="text-red-500 px-4 text-sm">{createError}</p>}
 
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           {filteredTables.length > 0 ? (
@@ -403,6 +379,7 @@ const DashboardTable = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

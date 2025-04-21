@@ -14,6 +14,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -48,6 +49,8 @@ const DashboardItem = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [prevImageUrl, setPrevImageUrl] = useState("");
+  const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
+
 
 
 const getImagePathFromUrl = (url: string) =>
@@ -115,17 +118,13 @@ const getImagePathFromUrl = (url: string) =>
     }
   };
 
-  const handleDeleteItem = async (itemId: string) => {
-    if (!token) return;
-    const confirmDelete = confirm("Tem certeza que deseja excluir este item?");
-    if (!confirmDelete) return;
-    if (!providerId) return;
-
-    const itemToDelete = items.find((i) => i.id === itemId);
-    const filePath = itemToDelete ? getImagePathFromUrl(itemToDelete.imgUrl) : "";
-
+  const handleDeleteItem = async () => {
+    if (!token || !itemToDelete || !providerId) return;
+  
+    const filePath = getImagePathFromUrl(itemToDelete.imgUrl);
+  
     try {
-      const res = await fetch(`/api/item?id=${itemId}`, {
+      const res = await fetch(`/api/item?id=${itemToDelete.id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -133,24 +132,25 @@ const getImagePathFromUrl = (url: string) =>
         },
         body: JSON.stringify({ providerId }),
       });
-
+  
       if (!res.ok) throw new Error("Erro ao excluir o item.");
-
+  
       if (filePath) {
         const { error: storageError } = await supabase.storage.from("images").remove([filePath]);
         if (storageError) {
           console.error("Erro ao remover imagem do storage:", storageError);
         }
       }
-      console.log(itemToDelete!.imgUrl)
-      console.log(filePath)
-
-      setItems((prev) => prev.filter((i) => i.id !== itemId));
+  
+      setItems((prev) => prev.filter((i) => i.id !== itemToDelete.id));
       setMessage("✅ Item excluído com sucesso!");
     } catch (err: any) {
       setMessage(`❌ ${err.message || "Erro ao apagar item."}`);
+    } finally {
+      setItemToDelete(null);
     }
   };
+  
 
   const formatBRL = (v: number) =>
     new Intl.NumberFormat("pt-BR", {
@@ -267,6 +267,31 @@ const getImagePathFromUrl = (url: string) =>
 
   return (
     <>
+
+      <Dialog open={!!itemToDelete} onOpenChange={() => setItemToDelete(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Confirmar exclusão</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir o item{" "}
+              <strong>{itemToDelete?.name}</strong>? Essa ação não poderá ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={() => setItemToDelete(null)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              className="hover:cursor-pointer"
+              onClick={handleDeleteItem}
+            >
+              Sim, excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
       <div className="flex w-full px-4 min-h-screen justify-center bg-gray-50">
         <div className="w-full max-w-screen-xl space-y-10">
 
@@ -334,7 +359,7 @@ const getImagePathFromUrl = (url: string) =>
                     />
                     <Trash2
                       className="w-5 h-5 text-red-500 cursor-pointer"
-                      onClick={() => handleDeleteItem(item.id)}
+                      onClick={() => setItemToDelete(item)}
                     />
                   </div>
 
