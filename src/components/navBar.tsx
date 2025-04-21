@@ -4,11 +4,8 @@ import Link from 'next/link';
 import {
   Menu,
   X,
-  Briefcase,
   LogIn,
   UserRound,
-  PlusCircle,
-  ChevronDown,
 } from 'lucide-react';
 
 export default function NavBar() {
@@ -34,16 +31,16 @@ export default function NavBar() {
   return (
     <nav className="bg-white text-black py-4 px-6 md:px-12 fixed top-0 left-0 w-full z-50 transition-all">
       <div className="flex justify-between items-center max-w-7xl mx-auto">
-        {/* Logo e links */}
+
         <div className="flex items-center gap-6">
           <h1 className="text-2xl font-extrabold text-blue-800">order</h1>
 
-          <div className="hidden md:flex items-center gap-6 text-sm font-semibold">
+          <div className="hidden md:flex items-center gap-6 text-sm mt-2 font-semibold">
             <Link
               href="/services"
               className="flex items-center gap-1 text-gray-800 hover:text-blue-800 transition"
             >
-              Planos <ChevronDown className="mt-[1px]" size={18} />
+              Planos
             </Link>
 
             <Link
@@ -55,7 +52,7 @@ export default function NavBar() {
           </div>
         </div>
 
-        {/* Ações - desktop */}
+
         <div className="hidden md:flex items-center gap-4">
           <Link
             href="/business"
@@ -97,7 +94,7 @@ export default function NavBar() {
            Planos
           </Link>
           <Link href="/about" className="hover:text-blue-800 transition border-b py-3">Sobre nós</Link>
-          <Link href="/create" className="flex items-center gap-2">
+          <Link href="/business" className="flex items-center gap-2">
            Criar cardápio
           </Link>
         </div>

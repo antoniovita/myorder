@@ -185,32 +185,32 @@ const ProfileForm = () => {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="name">Nome</Label>
-            <Input className="text-sm" id="name" value={name} onChange={(e) => setName(e.target.value)} disabled={loading} />
+            <Input className="text-sm text-gray-500" id="name" value={name} onChange={(e) => setName(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="cpf">CPF</Label>
-            <Input className="text-sm" id="cpf" value={cpf} onChange={(e) => setCpf(e.target.value)} disabled={loading} />
+            <Input className="text-sm text-gray-500" id="cpf" value={cpf} onChange={(e) => setCpf(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="cnpj">CNPJ</Label>
-            <Input className="text-sm" id="cnpj" value={cnpj} onChange={(e) => setCnpj(e.target.value)} disabled={loading} />
+            <Input className="text-sm text-gray-500" id="cnpj" value={cnpj} onChange={(e) => setCnpj(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="phone">Número</Label>
-            <Input className="text-sm" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} />
+            <Input className="text-sm text-gray-500" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="owner">Responsável</Label>
-            <Input className="text-sm" id="owner" value={owner} onChange={(e) => setOwner(e.target.value)} disabled={loading} />
+            <Input className="text-sm text-gray-500" id="owner" value={owner} onChange={(e) => setOwner(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
             <Label htmlFor="address">Endereço</Label>
-            <Input className="text-sm" id="address" value={address} onChange={(e) => setAddress(e.target.value)} disabled={loading} />
+            <Input className="text-sm text-gray-500" id="address" value={address} onChange={(e) => setAddress(e.target.value)} disabled={loading} />
           </div>
 
           <div className="grid grid-cols-1 gap-3">
@@ -220,7 +220,7 @@ const ProfileForm = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={loading}
-              className="min-h-[150px] text-sm"
+              className="min-h-[150px] text-sm text-gray-500 focus:outline-none"
             />
           </div>
 
