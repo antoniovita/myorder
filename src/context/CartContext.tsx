@@ -77,6 +77,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     Cookies.remove('cart')
   };
 
+  
+
   if (!isInitialized) {
     return null;
   }

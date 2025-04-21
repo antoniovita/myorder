@@ -4,9 +4,11 @@ import { useCart } from '@/hooks/useCart';
 import Image from 'next/image';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import Cookies from 'js-cookie';
+import React from 'react';
 
 const CartPage = () => {
-  const { cartItems, updateCartQuantity, removeFromCart, clearCart} = useCart();
+  const { cartItems, updateCartQuantity, removeFromCart, clearCart } = useCart();
+  const [observations, setObservations] = React.useState<{ [key: string]: string }>({});
 
   const handleQuantityChange = (itemId: string, delta: number) => {
     const currentItem = cartItems.find(item => item.id === itemId);
@@ -18,6 +20,18 @@ const CartPage = () => {
 
   const handleDeleteItem = (itemId: string) => {
     removeFromCart(itemId);
+    setObservations(prev => {
+      const updated = { ...prev };
+      delete updated[itemId];
+      return updated;
+    });
+  };
+
+  const handleObservationChange = (itemId: string, text: string) => {
+    setObservations(prev => ({
+      ...prev,
+      [itemId]: text,
+    }));
   };
 
   const createOrder = async () => {
@@ -26,12 +40,11 @@ const CartPage = () => {
         (acc, item) => acc + item.price * (item.quantity ?? 1),
         0
       );
-      console.log('Total do pedido:', total);
 
-      if(cartItems.length == 0){
-        return console.log('Não se pode criar order sem items.')
+      if (cartItems.length === 0) {
+        return console.log('Não se pode criar order sem items.');
       }
-  
+
       const response = await fetch('/api/order', {
         method: 'POST',
         headers: {
@@ -46,56 +59,53 @@ const CartPage = () => {
           date: new Date().toISOString(),
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Erro ao criar pedido');
       }
-  
+
       const data = await response.json();
-      const order = data.order
+      const order = data.order;
       console.log('Pedido criado:', order);
-      console.log(order.id)
-  
+
       for (const item of cartItems) {
+        console.log('[DEBUG] Processando item:', item);
+        console.log('[DEBUG] item.id:', item.id);
+        console.log('[DEBUG] observation:', observations[item.id]);
+
         const orderItemPayload = {
           itemId: item.id,
           quantity: item.quantity || 1,
           orderId: order.id,
-          observation: item.observation || '',
+          observation: observations[item.id] || '',
         };
-      
+
         console.log(`Enviando item do pedido para API /api/orderItem:`, orderItemPayload);
-      
+
         const itemResponse = await fetch('/api/orderItem', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(orderItemPayload),
         });
-      
+
         if (!itemResponse.ok) {
           throw new Error(`Erro ao criar item do pedido: ${item.id}`);
         }
-      
-        console.log(`Item do pedido ${item.id} criado com sucesso`);
       }
-      
-      
+
       console.log('Itens do pedido criados.');
       clearCart();
-  
+      setObservations({});
     } catch (error) {
       console.error('Erro na criação do pedido:', error);
       alert('Erro ao criar pedido');
     }
   };
-  
 
   const total = cartItems.reduce(
     (acc, item) => acc + item.price * (item.quantity ?? 1),
     0
   );
-
-
 
   const formatBRL = (v: number) =>
     new Intl.NumberFormat("pt-BR", {
@@ -113,7 +123,7 @@ const CartPage = () => {
           {cartItems.map((item) => (
             <div
               key={item.id}
-              className="relative flex flex-row items-center gap-4 p-2 sm:gap-6 bg-white sm:p-4 border-gray-200 border-b sm:border-0"
+              className="relative flex flex-col sm:flex-row items-start sm:items-center gap-4 p-2 sm:gap-6 bg-white sm:p-4 border-gray-200 border-b sm:border-0"
             >
               <button
                 onClick={() => handleDeleteItem(item.id)}
@@ -122,23 +132,29 @@ const CartPage = () => {
                 <Trash2 size={18} />
               </button>
 
-              <div className="relative w-25 h-25 sm:w-30 sm:h-30 rounded-md overflow-hidden border border-gray-100">
-                <Image
-                  src={item.imgUrl}
-                  alt={item.name}
-                  fill
-                  className="object-cover"
-                />
+              <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-md overflow-hidden border border-gray-100">
+                <Image src={item.imgUrl} alt={item.name} fill className="object-cover" />
               </div>
 
-              <div className="flex-1 w-full">
-                <h2 className="text-[15px] sm:text-lg font-medium text-gray-800">{item.name}</h2>
-                {item.description && (
-                  <p className="text-[12px] max-w-[300px] sm:text-sm sm:max-w-[1000px] text-gray-500 mt-1 line-clamp-2">{item.description}</p>
-                )}
+              <div className="flex-1 w-full space-y-2">
+                <div>
+                  <h2 className="text-[15px] sm:text-lg font-medium text-gray-800">{item.name}</h2>
+                  {item.description && (
+                    <p className="text-[12px] max-w-[300px] sm:text-sm sm:max-w-[1000px] text-gray-500 mt-1 line-clamp-2">
+                      {item.description}
+                    </p>
+                  )}
+                </div>
 
-                <div className=" flex flex-row items-center justify-between gap-3">
-                  <div className="flex sm:py-1.25 py-1.25 items-center rounded-xl bg-gray-100 overflow-hidden">
+                <textarea
+                  placeholder="Adicionar observação (ex: sem cebola)"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  value={observations[item.id] || ''}
+                  onChange={(e) => handleObservationChange(item.id, e.target.value)}
+                />
+
+                <div className="flex flex-row items-center justify-between gap-3">
+                  <div className="flex items-center rounded-xl bg-gray-100 overflow-hidden">
                     <button
                       className="px-3 py-1 text-gray-700 hover:cursor-pointer transition"
                       onClick={() => handleQuantityChange(item.id, -1)}
@@ -162,7 +178,7 @@ const CartPage = () => {
                     </span>
                     <br />
                     <span className="font-normal text-[18px] sm:text-lg text-gray-900">
-                    {formatBRL(item.price)}
+                      {formatBRL(item.price)}
                     </span>
                   </div>
                 </div>

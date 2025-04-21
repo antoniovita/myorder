@@ -20,6 +20,7 @@ interface OrderItem {
   quantity: number;
   price: number;
   item: Item;
+  observation: string;
 }
 
 interface Order {
@@ -138,6 +139,10 @@ const OrderPage = () => {
                         <div className="flex-1">
                           <p className="text-gray-900 font-medium">{item.item.name}</p>
                           <p className="text-sm text-gray-500">Quantidade: {item.quantity}</p>
+
+                          {item.observation && item.observation.trim() !== '' && (
+                            <p className="text-sm text-gray-700 italic mt-1">Obs: {item.observation}</p>
+                          )}
                         </div>
                         <div className="text-right">
                           <p className="text-black font-semibold">
@@ -146,6 +151,7 @@ const OrderPage = () => {
                         </div>
                       </div>
                     ))}
+
                   </div>
                 )}
               </div>
