@@ -8,6 +8,7 @@ import {
   Search as SearchIcon,
   X,
 } from "lucide-react";
+import Image from "next/image";
 
 import { supabase } from "@/lib/supabase";
 import {
@@ -40,7 +41,6 @@ const DashboardItem = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [providerId, setProviderId] = useState<string | null>(null);
@@ -74,7 +74,7 @@ const getImagePathFromUrl = (url: string) =>
         setToken(data.token || null);
         setProviderId(data.id || null);
       } catch (err) {
-        setError("Erro ao buscar credenciais.");
+        console.error(err);
       }
     };
     fetchAuthData();
@@ -144,8 +144,9 @@ const getImagePathFromUrl = (url: string) =>
   
       setItems((prev) => prev.filter((i) => i.id !== itemToDelete.id));
       setMessage("✅ Item excluído com sucesso!");
-    } catch (err: any) {
-      setMessage(`❌ ${err.message || "Erro ao apagar item."}`);
+    } catch (err) {
+      console.error(err);
+      setMessage("❌ Erro ao excluir o item.");
     } finally {
       setItemToDelete(null);
     }
@@ -197,8 +198,9 @@ const getImagePathFromUrl = (url: string) =>
       setDescription("");
       setImageFile(null);
       setImageUrl("");
-    } catch (error: any) {
-      setMessage(`❌ ${error.message}`);
+    } catch (err) {
+      console.log(err);
+      setMessage("❌ Erro ao criar item.");
     }
   };
 
@@ -328,7 +330,9 @@ const getImagePathFromUrl = (url: string) =>
                   key={item.id}
                   className="relative border border-gray-200 rounded-2xl bg-white overflow-hidden shadow-sm hover:shadow-md transition-all"
                 >
-                  <img
+                  <Image
+                    width={500}
+                    height={500}
                     src={item.imgUrl}
                     alt={item.name}
                     className="w-full h-80 sm:h-60 object-cover"
@@ -453,7 +457,9 @@ const getImagePathFromUrl = (url: string) =>
               </label>
 
               {imageUrl && (
-                <img
+                <Image
+                  width={500}
+                  height={500}
                   src={imageUrl}
                   alt="Preview"
                   className="w-full h-40 object-cover rounded-lg border"
@@ -554,7 +560,9 @@ const getImagePathFromUrl = (url: string) =>
             </label>
 
             {imageUrl && (
-              <img
+              <Image
+                height={500}
+                width={500}
                 src={imageUrl}
                 alt="Preview"
                 className="w-full h-40 object-cover rounded-lg border"

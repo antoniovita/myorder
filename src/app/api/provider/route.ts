@@ -88,7 +88,7 @@ const POST = async (req: NextRequest) => {
       (await cookiesStore).set("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3600 });
       (await cookiesStore).set("id", provider.id, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3600 });
 
-      const { password, ...providerData } = provider;
+      const { ...providerData } = provider;
       return NextResponse.json({ message: 'Provider criado com sucesso', provider: providerData, token }, { status: 201 });
     }
 
@@ -116,7 +116,7 @@ const POST = async (req: NextRequest) => {
       (await cookiesStore).set("token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3600 });
       (await cookiesStore).set("id", provider.id, { httpOnly: true, secure: process.env.NODE_ENV === "production", maxAge: 3600 });
 
-      const { password, ...providerData } = provider;
+      const { ...providerData } = provider;
       return NextResponse.json({ message: 'Login executado com sucesso', provider: providerData, token }, { status: 200 });
     }
 
