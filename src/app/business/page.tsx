@@ -2,20 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import {
-  Users,
-  Table as TableIcon,
   ShoppingCart,
   Clock,
-  DollarSign,
   User,
-  CircleCheck,
   CircleUserRound
 } from 'lucide-react';
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -82,6 +76,7 @@ const BusinessPage = () => {
         setToken(data.token || null);
         setProviderId(data.id || null);
       } catch (err) {
+        console.error(err);
         setError('Erro ao buscar credenciais.');
       } finally {
         setLoading(false);
@@ -116,6 +111,7 @@ const BusinessPage = () => {
         setTables(tablesData);
         setOrders(ordersData);
       } catch (err) {
+        console.error(err);
         setError('Erro ao buscar dados. Verifique a conexão.');
       } finally {
         setLoading(false);

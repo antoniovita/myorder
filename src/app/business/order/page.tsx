@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Clock, ShoppingCart, Trash2 } from 'lucide-react';
+import { ShoppingCart, Trash2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -141,6 +141,7 @@ export default function OrderDashboard() {
       setShowSuccessDialog(true);
       setOrderToDelete(null);
     } catch (error) {
+      console.error(error);
       setError('Erro ao cancelar pedido');
       setShowErrorDialog(true);
     }
