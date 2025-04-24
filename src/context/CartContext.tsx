@@ -4,7 +4,10 @@ import React, { createContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
 export interface Item {
+  imgUrl: string;
   id: string;
+  description: string;
+  category: string;
   name: string;
   price: number;
   quantity?: number;
