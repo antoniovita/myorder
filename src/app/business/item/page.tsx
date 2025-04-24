@@ -112,6 +112,7 @@ const getImagePathFromUrl = (url: string) =>
       setImageUrl(urlData.publicUrl);
       setMessage("");
     } catch (err) {
+      console.log(err)
       setMessage("❌ Erro ao fazer upload da imagem");
     } finally {
       setUploading(false);

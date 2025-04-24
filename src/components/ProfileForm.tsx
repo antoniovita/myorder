@@ -64,8 +64,8 @@ const ProfileForm = () => {
         setOwner(providerData.owner || "");
         setCnpj(providerData.cnpj || "");
         setAddress(providerData.address || "");
-      } catch (err: any) {
-        setError(err.message || "Erro ao buscar dados.");
+      } catch {
+        setError("Erro ao buscar dados.");
       }
     };
 
@@ -107,9 +107,7 @@ const ProfileForm = () => {
       }
 
       setSuccess("Informações atualizadas com sucesso!");
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
+    }  finally {
       setLoading(false);
     }
   };

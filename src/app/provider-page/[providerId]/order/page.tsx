@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
-import { ClipboardList, ChevronDown, ChevronUp } from 'lucide-react';
+import { ClipboardList } from 'lucide-react';
+import Image from 'next/image';
 
 interface Item {
   id: string;
@@ -131,7 +132,9 @@ const OrderPage = () => {
                         key={item.id}
                         className="flex items-center bg-white border border-gray-300 rounded-xl p-3 transition"
                       >
-                        <img
+                        <Image
+                          width={64}
+                          height={64}
                           src={item.item.imgUrl}
                           alt={item.item.name}
                           className="w-16 h-16 object-cover rounded-lg mr-4 border"

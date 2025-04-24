@@ -60,6 +60,7 @@ const ProviderWelcomePage = () => {
     
             router.push(`/provider-page/${providerId}/items`);
         } catch (err) {
+            console.log("Erro ao criar usuário:", err);
             setError("Falha ao criar usuário. Tente novamente.");
         } finally {
             setLoading(false);

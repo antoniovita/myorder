@@ -21,6 +21,7 @@ export default function NavBar() {
         const data = await response.json();
         setToken(data.token || null);
       } catch (err) {
+        console.log(err);
         console.error('Erro ao buscar credenciais.');
       }
     };

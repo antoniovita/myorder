@@ -8,7 +8,7 @@ export interface Item {
   name: string;
   price: number;
   quantity?: number;
-  [key: string]: any;
+  key: string
 }
 
 interface CartContextType {

@@ -14,6 +14,11 @@ import {
 } from '@/components/ui/dialog';
 import BackgroundCanvas from '@/components/BackgroundCanvas';
 
+interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  id: string;
+}
+
 const LoginPage = () => {
   const router = useRouter();
   const [isRegistering, setIsRegistering] = useState(false);
@@ -32,7 +37,7 @@ const LoginPage = () => {
     address: ''
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value
@@ -103,7 +108,6 @@ const LoginPage = () => {
     <>
       <BackgroundCanvas />
 
-
       <Dialog open={!!error} onOpenChange={() => setError('')}>
         <DialogContent>
           <DialogHeader>
@@ -151,13 +155,11 @@ const LoginPage = () => {
           <div className="space-y-4">
             {isRegistering ? (
               <>
-
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <InputField label="Nome do Restaurante" id="name" value={formData.name} onChange={handleChange} placeholder="Ex: Pizzaria do João" />
                   <InputField label="Nome do Dono" id="owner" value={formData.owner} onChange={handleChange} placeholder="João Silva" />
                   <InputField label="Telefone" id="phone" value={formData.phone} onChange={handleChange} placeholder="(11) 98765-4321" />
                 </div>
-
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <InputField label="Endereço" id="address" value={formData.address} onChange={handleChange} placeholder="Rua Exemplo, 123" />
@@ -165,12 +167,8 @@ const LoginPage = () => {
                   <InputField label="CPF" id="cpf" value={formData.cpf} onChange={handleChange} placeholder="000.000.000-00" />
                 </div>
 
-
                 <InputField label="Email" id="email" value={formData.email} onChange={handleChange} placeholder="seuemail@exemplo.com" />
-
-
                 <InputField label="Senha" id="password" type="password" value={formData.password} onChange={handleChange} placeholder="Crie uma senha segura" />
-
 
                 <div>
                   <label className="text-sm text-gray-700" htmlFor="description">Descrição do Restaurante</label>
@@ -221,7 +219,7 @@ const LoginPage = () => {
   );
 };
 
-const InputField = ({ label, id, value, onChange, placeholder, type = "text" }: any) => (
+const InputField = ({ label, id, value, onChange, placeholder, type = "text" }: InputFieldProps) => (
   <div>
     <label className="text-sm text-gray-700" htmlFor={id}>{label}</label>
     <input

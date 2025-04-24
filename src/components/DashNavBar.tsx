@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Users, ShoppingCart, Table, House, Utensils, User, UserCheck2, UserCircle, UserCircle2 } from 'lucide-react'
+import { Users, ShoppingCart, Table, House, Utensils, UserCircle2 } from 'lucide-react'
 import classNames from 'classnames'
 import { usePathname } from 'next/navigation'
 

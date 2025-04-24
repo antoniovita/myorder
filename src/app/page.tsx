@@ -1,6 +1,5 @@
 'use client'
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import HomeAdvantage from "@/components/homeAdvantage";
 import HomePresent from "@/components/homePresent";
 import AboutUs from '@/components/aboutUs';

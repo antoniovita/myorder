@@ -55,7 +55,6 @@ const DashboardTable = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [filteredTables, setFilteredTables] = useState<Table[]>([]);
   const [expandedTables, setExpandedTables] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [message, setMessage] = useState("");
@@ -82,7 +81,7 @@ const DashboardTable = () => {
       const data = await response.json();
       setToken(data.token || null);
       setProviderId(data.id || null);
-    } catch (err) {
+    } catch {
       setError("Erro ao buscar credenciais.");
     }
   };
@@ -90,7 +89,6 @@ const DashboardTable = () => {
   const fetchTables = async () => {
     if (!providerId || !token) return;
     try {
-      setLoading(true);
       const res = await fetch(`/api/table`, {
         headers: { Authorization: `Bearer ${token}` },
         credentials: "include",
@@ -100,10 +98,8 @@ const DashboardTable = () => {
       const sortedTables = data.sort((a: Table, b: Table) => a.number - b.number);
       setTables(sortedTables);
       setFilteredTables(sortedTables);
-    } catch (err) {
+    } catch {
       setError("Erro ao buscar mesas. Verifique a conexão.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -143,8 +139,8 @@ const DashboardTable = () => {
       setFilteredTables(updated);
       setTableNumber("");
       showTemporaryMessage(setSuccess, "Mesa criada com sucesso!");
-    } catch (error: any) {
-      showTemporaryMessage(setError, error.message || "Erro inesperado ao criar mesa.");
+    } catch {
+      showTemporaryMessage(setError, "Erro inesperado ao criar mesa.");
     } finally {
       setCreating(false);
     }
@@ -171,8 +167,8 @@ const DashboardTable = () => {
         )
       );
       showTemporaryMessage(setSuccess, "Mesa limpa com sucesso!");
-    } catch (error: any) {
-      showTemporaryMessage(setError, error.message || "Erro inesperado ao limpar mesa.");
+    } catch {
+      showTemporaryMessage(setError, "Erro inesperado ao limpar mesa.");
     } finally {
       setCleaningTableId(null);
     }
@@ -192,7 +188,7 @@ const DashboardTable = () => {
       setFilteredTables(updated);
       showTemporaryMessage(setSuccess, "Mesa excluída com sucesso!");
       setDeletePopupId(null);
-    } catch (err) {
+    } catch {
       showTemporaryMessage(setError, "Erro ao apagar mesa.");
     }
   };
