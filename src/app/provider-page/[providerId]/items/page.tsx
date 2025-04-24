@@ -64,10 +64,17 @@ export default function ItemsPage() {
 
   const handleAddToCart = (item: Item) => {
     const qty = quantities[item.id] || 1;
-    for (let i = 0; i < qty; i++) addToCart(item);
+    const itemWithKey = {
+      ...item,
+      key: item.id,
+    };
+  
+    for (let i = 0; i < qty; i++) addToCart(itemWithKey);
+    
     setAddedProductId(item.id);
     setTimeout(() => setAddedProductId(null), 1800);
   };
+  
 
   const formatBRL = (v: number) =>
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
